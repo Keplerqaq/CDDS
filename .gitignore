@@ -11,6 +11,9 @@
 # Build
 src/main
 
+# Generated files
+*.pptx
+
 # Archive
 *.zip
 *.tar.gz
