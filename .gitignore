@@ -15,6 +15,3 @@ src/main
 *.zip
 *.tar.gz
 *.textClipping
-
-# Claude Code (local only, never push)
-CLAUDE.md
