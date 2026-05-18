@@ -243,11 +243,11 @@ typedef struct {
  * r[0] 不用。另存四个收入等级的分组索引。
  * 设计要点：排序不改变原始记录顺序，排序结果存在 index_va/index_gr 索引里。 */
 typedef struct {
-    RecType r[MAXSIZE + 1];
-    int     index_l[MAXSIZE + 1];    /* 低收入国家在 r[] 中的下标 */
-    int     index_ml[MAXSIZE + 1];   /* 中低等收入 */
-    int     index_mh[MAXSIZE + 1];   /* 中高等收入 */
-    int     index_h[MAXSIZE + 1];    /* 高收入 */
+    RecType r[MAXSIZE];
+    int     index_l[MAXSIZE];    /* 低收入国家在 r[] 中的下标 */
+    int     index_ml[MAXSIZE];   /* 中低等收入 */
+    int     index_mh[MAXSIZE];   /* 中高等收入 */
+    int     index_h[MAXSIZE];    /* 高收入 */
     int     length;
 } SqList;
 
@@ -295,9 +295,8 @@ void MVA_SqList_Read(SqList *L, const char *filename) {
     int n = 0;
     char temp_type[30];
 
-    while (!feof(fp) && n < MAXSIZE) {
-        n++;
-        fscanf(fp, "%s %s", L->r[n].country, temp_type);
+    while (n < MAXSIZE) {
+        if (fscanf(fp, "%s %s", L->r[n].country, temp_type) != 2) break;
         for (int i = 0; i < YEARS; i++)
             fscanf(fp, "%f", &L->r[n].value_added[i]);
 
@@ -312,9 +311,10 @@ void MVA_SqList_Read(SqList *L, const char *filename) {
 
         for (int i = 0; i < YEARS; i++)
             L->r[n].year[i] = 1999 + i;
+        n++;
     }
 
-    L->length = n - 1;  /* 最后一行多读了一次 */
+    L->length = n;
     fclose(fp);
     printf("导入成功，共 %d 个国家。\n", L->length);
 }
@@ -335,10 +335,10 @@ void MVA_SqList_Search(SqList *L) {
     }
 
     int i;
-    for (i = 1; i <= L->length; i++)
+    for (i = 0; i < L->length; i++)
         if (strcmp(name, L->r[i].country) == 0) break;
 
-    if (i > L->length) {
+    if (i >= L->length) {
         printf("未找到该国。\n"); return;
     }
 
@@ -357,7 +357,7 @@ void MVA_SqList_Search(SqList *L) {
  * growth_rate[0]（1999年）保持为 0，增速从 2000 年开始有效。 */
 
 void MVA_SqList_Calculate(SqList *L) {
-    for (int i = 1; i <= L->length; i++) {
+    for (int i = 0; i < L->length; i++) {
         L->r[i].growth_rate[0] = 0;  /* 1999 年无前值 */
         for (int k = 1; k < YEARS; k++) {
             float prev = L->r[i].value_added[k - 1];
@@ -377,12 +377,12 @@ void MVA_SqList_Calculate(SqList *L) {
  * 使用快速排序 —— 与⑤增速排名使用的选择排序不同，满足"不同算法"要求。 */
 
 void MVA_SqList_Sort_Va(SqList *L) {
-    int idx_arr[MAXSIZE + 1];   /* 临时索引数组，用于快排 */
+    int idx_arr[MAXSIZE];   /* 临时索引数组，用于快排 */
 
     for (int year = 0; year < YEARS; year++) {
-        /* 初始化索引：1, 2, ..., length */
-        for (int i = 1; i <= L->length; i++)
-            idx_arr[i - 1] = i;
+        /* 初始化索引：0, 1, ..., length-1 */
+        for (int i = 0; i < L->length; i++)
+            idx_arr[i] = i;
 
         quick_sort_idx(L, idx_arr, 0, L->length - 1, year);
 
@@ -414,9 +414,8 @@ void MVA_SqList_Sort_Va(SqList *L) {
 
 void group_sort_select(SqList *L, int *group, int group_size,
                        int *result_idx, int year) {
-    /* group 是 1-indexed 数组（下标从 1 开始），需 +1 偏移 */
     for (int i = 0; i < group_size; i++)
-        result_idx[i] = group[i + 1];
+        result_idx[i] = group[i];
 
     /* 选择排序（降序，按增速） */
     for (int i = 0; i < group_size - 1; i++) {
@@ -435,21 +434,21 @@ void group_sort_select(SqList *L, int *group, int group_size,
 }
 
 void MVA_SqList_Sort_Gr(SqList *L) {
-    int temp_rank[MAXSIZE + 1];
+    int temp_rank[MAXSIZE];
 
     /* ① 将各国按收入等级分组 */
     k1 = k2 = k3 = k4 = 0;
-    for (int i = 1; i <= L->length; i++) {
+    for (int i = 0; i < L->length; i++) {
         switch (L->r[i].country_type) {
-            case 0: L->index_l[++k1] = i; break;
-            case 1: L->index_ml[++k2] = i; break;
-            case 2: L->index_mh[++k3] = i; break;
-            case 3: L->index_h[++k4] = i; break;
+            case 0: L->index_l[k1++] = i; break;
+            case 1: L->index_ml[k2++] = i; break;
+            case 2: L->index_mh[k3++] = i; break;
+            case 3: L->index_h[k4++] = i; break;
         }
     }
 
     /* ② 初始化各记录的 index_gr */
-    for (int i = 1; i <= L->length; i++)
+    for (int i = 0; i < L->length; i++)
         for (int year = 0; year < YEARS; year++)
             L->r[i].index_gr[year] = i;
 
@@ -491,10 +490,10 @@ void MVA_SqList_Analyze(SqList *L) {
     scanf("%s", name);
 
     int i;
-    for (i = 1; i <= L->length; i++)
+    for (i = 0; i < L->length; i++)
         if (strcmp(name, L->r[i].country) == 0) break;
 
-    if (i > L->length) { printf("未找到该国。\n"); return; }
+    if (i >= L->length) { printf("未找到该国。\n"); return; }
 
     RecType *rec = &L->r[i];
 
@@ -547,11 +546,11 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     FILE *fp;
 
     /* 若尚未排名，自动执行 */
-    if (L->r[1].index_va[0] == 0) {
+    if (L->r[0].index_va[0] == 0) {
         printf("（自动执行增加值排名...）\n");
         MVA_SqList_Sort_Va(L);
     }
-    if (L->r[1].index_gr[0] == 0) {
+    if (L->r[0].index_gr[0] == 0) {
         printf("（自动执行增速排名...）\n");
         MVA_SqList_Sort_Gr(L);
     }
@@ -570,7 +569,7 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
         fprintf(fp, "\n%d 年世界各国制造业增加值排名\n", 1999 + year);
         fprintf(fp, "%-4s %-20s %12s\n", "名次", "国家", "增加值（亿美元）");
         for (int rk = 1; rk <= L->length; rk++) {
-            for (int i = 1; i <= L->length; i++) {
+            for (int i = 0; i < L->length; i++) {
                 if (L->r[i].index_va[year] == rk) {
                     fprintf(fp, "%-4d %-20s %12.2f\n",
                             rk, L->r[i].country, L->r[i].value_added[year]);
@@ -596,7 +595,7 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
                     1999 + year, type_name[g]);
             fprintf(fp, "%-4s %-20s %10s\n", "名次", "国家", "增速");
             for (int rk = 1; rk <= sizes[g]; rk++) {
-                for (int j = 1; j <= sizes[g]; j++) {
+                for (int j = 0; j < sizes[g]; j++) {
                     int id = groups[g][j];
                     if (L->r[id].index_gr[year] == rk) {
                         fprintf(fp, "%-4d %-20s %10.2f%%\n",
