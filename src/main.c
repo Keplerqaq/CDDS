@@ -231,7 +231,7 @@ int k1 = 0, k2 = 0, k3 = 0, k4 = 0;  /* 四个收入等级的国家数 */
 
 typedef struct {
     char  country[30];               /* 国家名 */
-    int   country_type;              /* 0=低收入 1=中低收入 2=中高收入 3=高收入 */
+    int   country_type;              /* 0=低收入 1=中低等收入 2=中高等收入 3=高收入 */
     float value_added[YEARS];        /* 制造业增加值（亿美元） */
     float growth_rate[YEARS];        /* 增速（下标0对应1999年，仅2000-2019有效） */
     int   year[YEARS];               /* 年份标签 */
@@ -245,8 +245,8 @@ typedef struct {
 typedef struct {
     RecType r[MAXSIZE + 1];
     int     index_l[MAXSIZE + 1];    /* 低收入国家在 r[] 中的下标 */
-    int     index_ml[MAXSIZE + 1];   /* 中低收入 */
-    int     index_mh[MAXSIZE + 1];   /* 中高收入 */
+    int     index_ml[MAXSIZE + 1];   /* 中低等收入 */
+    int     index_mh[MAXSIZE + 1];   /* 中高等收入 */
     int     index_h[MAXSIZE + 1];    /* 高收入 */
     int     length;
 } SqList;
@@ -408,8 +408,8 @@ void MVA_SqList_Sort_Va(SqList *L) {
  *
  * 收入等级分组逻辑：
  *   index_l[k1]  = 低收入国家在 r[] 中的下标
- *   index_ml[k2] = 中低收入国家在 r[] 中的下标
- *   index_mh[k3] = 中高收入国家在 r[] 中的下标
+ *   index_ml[k2] = 中低等收入国家在 r[] 中的下标
+ *   index_mh[k3] = 中高等收入国家在 r[] 中的下标
  *   index_h[k4]  = 高收入国家在 r[] 中的下标 */
 
 void group_sort_select(SqList *L, int *group, int group_size,
@@ -453,7 +453,7 @@ void MVA_SqList_Sort_Gr(SqList *L) {
         for (int year = 0; year < YEARS; year++)
             L->r[i].index_gr[year] = i;
 
-    char *type_name[] = {"低收入", "中低收入", "中高收入", "高收入"};
+    char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
     int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
     int   sizes[]      = {k1, k2, k3, k4};
 
@@ -585,7 +585,7 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     fp = fopen(file_gr, "w");
     if (!fp) { printf("无法创建文件 %s\n", file_gr); return; }
 
-    char *type_name[] = {"低收入", "中低收入", "中高收入", "高收入"};
+    char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
     int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
     int   sizes[]      = {k1, k2, k3, k4};
 
