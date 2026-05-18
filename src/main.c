@@ -259,12 +259,10 @@ typedef struct {
 int partition(SqList *L, int a[], int low, int high, int year) {
     int pivot = a[low];
     while (low < high) {
-        while (low < high &&
-               L->r[a[high]].value_added[year] <= L->r[pivot].value_added[year])
+        while (low < high && L->r[a[high]].value_added[year] <= L->r[pivot].value_added[year])
             high--;
         a[low] = a[high];
-        while (low < high &&
-               L->r[a[low]].value_added[year] >= L->r[pivot].value_added[year])
+        while (low < high && L->r[a[low]].value_added[year] >= L->r[pivot].value_added[year])
             low++;
         a[high] = a[low];
     }
