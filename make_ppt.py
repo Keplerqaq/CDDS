@@ -171,8 +171,7 @@ add_textbox(slide, Inches(2), Inches(2.5), Inches(9.333), Inches(1.0),
             size=30, bold=False, color=ACCENT, align=PP_ALIGN.CENTER)
 
 add_multiline(slide, Inches(2), Inches(3.6), Inches(9.333), Inches(2.0), [
-    ("计科 241/242 班 · 第 3 组", False, 22, GRAY),
-    ("指导教师：周文峰", False, 20, GRAY),
+    ("第 3 组", False, 22, GRAY),
     ("2026 年 5 月 20 日", False, 18, GRAY),
 ], align=PP_ALIGN.CENTER)
 
@@ -722,8 +721,6 @@ add_textbox(slide, Inches(2), Inches(1.5), Inches(9.333), Inches(1.2),
             align=PP_ALIGN.CENTER)
 
 add_multiline(slide, Inches(2), Inches(3.2), Inches(9.333), Inches(2.5), [
-    ("感谢周文峰老师的指导", False, 26, GRAY),
-    ("", False, 10, GRAY),
     ("恳请各位老师批评指正", False, 22, GRAY),
 ], align=PP_ALIGN.CENTER)
 
