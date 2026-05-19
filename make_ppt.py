@@ -187,14 +187,14 @@ add_title_bar(slide, "目  录")
 add_bottom_bar(slide)
 
 toc_items = [
-    ("03", "选题的意义", "两个题目各自对应什么数据结构，综合训练价值"),
-    ("04", "问题分析 · 小猫钓鱼", "游戏规则、数据结构映射、流程图"),
-    ("05", "存储结构 · 小猫钓鱼", "链式队列/栈的接口与实现"),
-    ("06", "问题分析 · 制造业统计", "数据规模、七项功能、索引数组原理"),
-    ("08", "存储结构 · 制造业统计", "顺序表+索引数组、两种排序对比"),
-    ("10", "可行性分析", "技术准备、风险应对"),
-    ("11", "人员分工", "分工表"),
-    ("12", "预期结果", "交付物"),
+    ("1", "选题的意义", "两个题目各自对应什么数据结构，综合训练价值"),
+    ("2", "问题分析 · 小猫钓鱼", "游戏规则、数据结构映射、流程图"),
+    ("3", "存储结构 · 小猫钓鱼", "链式队列/栈的接口与实现"),
+    ("4", "问题分析 · 制造业统计", "数据规模、七项功能、索引数组原理"),
+    ("5", "存储结构 · 制造业统计", "顺序表+索引数组、两种排序对比"),
+    ("6", "可行性分析", "技术准备、风险应对"),
+    ("7", "人员分工", "分工表"),
+    ("8", "预期结果", "交付物"),
 ]
 
 for i, (num, title, desc) in enumerate(toc_items):
@@ -375,7 +375,7 @@ add_multiline(slide, Inches(1.2), Inches(5.8), Inches(11.0), Inches(0.8), [
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "二、问题分析 · 制造业增加值统计分析系统")
+add_title_bar(slide, "四、问题分析 · 制造业增加值统计分析系统")
 add_bottom_bar(slide)
 
 add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.4),
@@ -429,7 +429,7 @@ for i, (label, fc) in enumerate(flow_steps):
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "二、核心难点 · 索引数组原理")
+add_title_bar(slide, "四、核心难点 · 索引数组原理")
 add_bottom_bar(slide)
 
 add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.4),
@@ -483,7 +483,7 @@ add_multiline(slide, Inches(1.2), Inches(5.4), Inches(10.5), Inches(1.2), [
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "三、存储结构及接口设计 · 制造业统计")
+add_title_bar(slide, "五、存储结构及接口设计 · 制造业统计")
 add_bottom_bar(slide)
 
 add_textbox(slide, Inches(0.8), Inches(1.3), Inches(6.0), Inches(0.5),
@@ -547,7 +547,7 @@ for i, (api, note) in enumerate(apis):
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "三、核心算法 · 两种排序方式对比")
+add_title_bar(slide, "五、核心算法 · 两种排序方式对比")
 add_bottom_bar(slide)
 
 # 表头
@@ -605,7 +605,7 @@ add_textbox(slide, Inches(0.8), Inches(6.9), Inches(12.0), Inches(0.4),
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "四、可行性分析")
+add_title_bar(slide, "六、可行性分析")
 add_bottom_bar(slide)
 
 feasibility = [
@@ -640,7 +640,7 @@ for i, (title, accent, items) in enumerate(feasibility):
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "五、人员分工")
+add_title_bar(slide, "七、人员分工")
 add_bottom_bar(slide)
 
 add_textbox(slide, Inches(0.8), Inches(1.3), Inches(5.5), Inches(0.5),
@@ -682,7 +682,7 @@ for r, row in enumerate(div_rows):
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "六、预期结果")
+add_title_bar(slide, "八、预期结果")
 add_bottom_bar(slide)
 
 results = [
