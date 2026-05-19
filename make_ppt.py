@@ -721,7 +721,7 @@ add_textbox(slide, Inches(2), Inches(1.5), Inches(9.333), Inches(1.2),
             align=PP_ALIGN.CENTER)
 
 add_multiline(slide, Inches(2), Inches(3.2), Inches(9.333), Inches(2.5), [
-    ("恳请各位老师批评指正", False, 22, GRAY),
+    ("恳请各位批评指正", False, 22, GRAY),
 ], align=PP_ALIGN.CENTER)
 
 add_bottom_bar(slide)
