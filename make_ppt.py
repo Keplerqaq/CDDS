@@ -217,14 +217,16 @@ add_rounded_box(slide, Inches(0.6), Inches(1.5), Inches(5.8), Inches(5.0))
 add_textbox(slide, Inches(1.0), Inches(1.7), Inches(5.0), Inches(0.6),
             "小猫钓鱼游戏", size=26, bold=True, color=YELLOW)
 add_multiline(slide, Inches(1.0), Inches(2.4), Inches(5.0), Inches(3.5), [
-    ("核心数据结构：链式队列 + 链式栈", True, 18, WHITE),
-    ("", False, 8, WHITE),
-    ("队列（FIFO）：手牌出队头、收牌入队尾", False, 16, GRAY),
-    ("栈（LIFO）：桌面压栈放牌、出栈收牌", False, 16, GRAY),
-    ("标记数组：O(1) 查重，桌面每种牌面至多一张", False, 16, GRAY),
-    ("", False, 8, WHITE),
-    ("价值：将课堂上的队列和栈从\"知道概念\"推进到", False, 16, GRAY),
-    ("\"独立设计和串联运行\"，理解 ADT 的设计思想", False, 16, GRAY),
+    ("综合训练队列与栈的链式实现", True, 18, WHITE),
+    ("", False, 10, WHITE),
+    ("队列和栈是数据结构课程的基础 ADT，", False, 16, GRAY),
+    ("课堂上学了概念和数组实现，", False, 16, GRAY),
+    ("本题要求用链式存储独立搭建并串联运行，", False, 16, GRAY),
+    ("检验从\"知道\"到\"会做\"的跨越。", False, 16, GRAY),
+    ("", False, 10, WHITE),
+    ("游戏规则的约束天然映射到数据结构：", False, 16, GRAY),
+    ("手牌 → 队列（FIFO），桌面 → 栈（LIFO），", False, 16, GRAY),
+    ("判重 → 标记数组（O(1)）。", False, 16, GRAY),
 ])
 
 # 右：制造业
@@ -232,13 +234,15 @@ add_rounded_box(slide, Inches(6.8), Inches(1.5), Inches(5.8), Inches(5.0))
 add_textbox(slide, Inches(7.2), Inches(1.7), Inches(5.0), Inches(0.6),
             "制造业统计分析系统", size=26, bold=True, color=GREEN)
 add_multiline(slide, Inches(7.2), Inches(2.4), Inches(5.0), Inches(3.5), [
-    ("核心结构：顺序表 + 索引数组", True, 18, WHITE),
-    ("", False, 8, WHITE),
-    ("96 国 × 21 年真实面板数据（1999-2019）", False, 16, GRAY),
-    ("七项功能：导入→查询→增速→两种排名→分析→保存", False, 16, GRAY),
-    ("", False, 8, WHITE),
-    ("价值：排序算法综合应用 + 索引数组的间接寻址思维", False, 16, GRAY),
-    ("用真实数据感受中国制造业在全球格局中的变迁", False, 16, GRAY),
+    ("综合训练排序算法与线性表操作", True, 18, WHITE),
+    ("", False, 10, WHITE),
+    ("排序是数据结构课程后半段的核心内容，", False, 16, GRAY),
+    ("本题要求用两种不同算法完成排名，", False, 16, GRAY),
+    ("同时引入索引数组解决\"不可改动原始顺序\"的约束。", False, 16, GRAY),
+    ("", False, 10, WHITE),
+    ("数据来自真实世界（96 国 21 年面板数据），", False, 16, GRAY),
+    ("在训练编程能力的同时，也能直观感受", False, 16, GRAY),
+    ("中国制造业在全球格局中的快速崛起。", False, 16, GRAY),
 ])
 
 # ============================================================
