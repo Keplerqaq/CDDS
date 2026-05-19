@@ -224,7 +224,7 @@ void fish_game(void) {
 
 /* ========================= 题目二：制造业增加值统计 =================== */
 
-#define MAXSIZE 150
+#define MAXSIZE 96
 #define YEARS   21          /* 1999-2019 */
 
 int k1 = 0, k2 = 0, k3 = 0, k4 = 0;  /* 四个收入等级的国家数 */
