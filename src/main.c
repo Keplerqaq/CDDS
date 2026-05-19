@@ -566,13 +566,19 @@ void manufacturing_system(void) {
 
     while (1) {
         int key = MVA_Menu_Show();
+
+        if (key >= 2 && key <= 7 && !loaded) {
+            printf("请先导入数据！\n");
+            continue;
+        }
+
         switch (key) {
             case 0:
                 printf("退出制造业统计分析系统。\n");
                 return;
             case 1:
                 printf("请输入数据文件名（默认: 制造业分析_inputdate.txt）：");
-                getchar();  
+                getchar();
                 {
                     char tmp[300];
                     fgets(tmp, sizeof(tmp), stdin);
@@ -582,30 +588,12 @@ void manufacturing_system(void) {
                 MVA_SqList_Read(&L, filename);
                 loaded = 1;
                 break;
-            case 2:
-                if (!loaded) { printf("请先导入数据！\n"); break; }
-                MVA_SqList_Search(&L);
-                break;
-            case 3:
-                if (!loaded) { printf("请先导入数据！\n"); break; }
-                MVA_SqList_Calculate(&L);
-                break;
-            case 4:
-                if (!loaded) { printf("请先导入数据！\n"); break; }
-                MVA_SqList_Sort_Va(&L);
-                break;
-            case 5:
-                if (!loaded) { printf("请先导入数据！\n"); break; }
-                MVA_SqList_Sort_Gr(&L);
-                break;
-            case 6:
-                if (!loaded) { printf("请先导入数据！\n"); break; }
-                MVA_SqList_Analyze(&L);
-                break;
-            case 7:
-                if (!loaded) { printf("请先导入数据！\n"); break; }
-                MVA_SqList_Save(&L, filename);
-                break;
+            case 2: MVA_SqList_Search(&L); break;
+            case 3: MVA_SqList_Calculate(&L); break;
+            case 4: MVA_SqList_Sort_Va(&L); break;
+            case 5: MVA_SqList_Sort_Gr(&L); break;
+            case 6: MVA_SqList_Analyze(&L); break;
+            case 7: MVA_SqList_Save(&L, filename); break;
         }
     }
 }
