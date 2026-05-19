@@ -319,8 +319,8 @@ code_q = """typedef struct QNode {
 } QNode;
 
 typedef struct {
-    QNode *front;   // 队头
-    QNode *rear;    // 队尾
+    QNode *front;
+    QNode *rear;
 } LinkQueue;
 
 void queue_init(LinkQueue *q);
@@ -345,7 +345,7 @@ code_s = """typedef struct SNode {
 } SNode;
 
 typedef struct {
-    SNode *top;     // 栈顶
+    SNode *top;
 } LinkStack;
 
 void stack_init(LinkStack *s);
@@ -491,16 +491,16 @@ add_textbox(slide, Inches(0.8), Inches(1.3), Inches(6.0), Inches(0.5),
 
 code_rec = """typedef struct {
     char  country[30];
-    int   country_type;    // 0=低 1=中低等 2=中高等 3=高
+    int   country_type;
     float value_added[21];
     float growth_rate[21];
     int   year[21];
-    int   index_va[21];    // 增加值排名
-    int   index_gr[21];    // 增速排名（组内）
+    int   index_va[21];
+    int   index_gr[21];
 } RecType;
 
 typedef struct {
-    RecType r[MAXSIZE];    // r[0] 为第一个国家
+    RecType r[MAXSIZE];
     int index_l[], index_ml[],
         index_mh[], index_h[];
     int length;
