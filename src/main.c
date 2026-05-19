@@ -240,7 +240,7 @@ typedef struct {
 } RecType;
 
 /* 顺序表。
- * r[0] 不用。另存四个收入等级的分组索引。
+ * r[0] 为第一个国家，下标 0..length-1 对应 96 国。
  * 设计要点：排序不改变原始记录顺序，排序结果存在 index_va/index_gr 索引里。 */
 typedef struct {
     RecType r[MAXSIZE];
@@ -557,17 +557,18 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     /* 保存增加值排名（按年） */
     fp = fopen(file_va, "w");
     if (!fp) { printf("无法创建文件 %s\n", file_va); return; }
+    int rank_idx[MAXSIZE];
     for (int year = 0; year < YEARS; year++) {
+        /* 预建排名→国家下标映射，避免 O(n²) 扫描 */
+        for (int i = 0; i < L->length; i++)
+            rank_idx[L->r[i].index_va[year] - 1] = i;
+
         fprintf(fp, "\n%d 年世界各国制造业增加值排名\n", 1999 + year);
         fprintf(fp, "%-4s %-20s %12s\n", "名次", "国家", "增加值（亿美元）");
         for (int rk = 1; rk <= L->length; rk++) {
-            for (int i = 0; i < L->length; i++) {
-                if (L->r[i].index_va[year] == rk) {
-                    fprintf(fp, "%-4d %-20s %12.2f\n",
-                            rk, L->r[i].country, L->r[i].value_added[year]);
-                    break;
-                }
-            }
+            int id = rank_idx[rk - 1];
+            fprintf(fp, "%-4d %-20s %12.2f\n",
+                    rk, L->r[id].country, L->r[id].value_added[year]);
         }
     }
     fclose(fp);
@@ -583,19 +584,20 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
             if (sizes[g] == 0) continue;
+            /* 预建组内排名→成员下标映射 */
+            for (int j = 0; j < sizes[g]; j++) {
+                int id = groups[g][j];
+                rank_idx[L->r[id].index_gr[year] - 1] = id;
+            }
+
             fprintf(fp, "\n%d 年 %s国家制造业增加值增速排名\n",
                     1999 + year, type_name[g]);
             fprintf(fp, "%-4s %-20s %10s\n", "名次", "国家", "增速");
             for (int rk = 1; rk <= sizes[g]; rk++) {
-                for (int j = 0; j < sizes[g]; j++) {
-                    int id = groups[g][j];
-                    if (L->r[id].index_gr[year] == rk) {
-                        fprintf(fp, "%-4d %-20s %10.2f%%\n",
-                                rk, L->r[id].country,
-                                L->r[id].growth_rate[year] * 100);
-                        break;
-                    }
-                }
+                int id = rank_idx[rk - 1];
+                fprintf(fp, "%-4d %-20s %10.2f%%\n",
+                        rk, L->r[id].country,
+                        L->r[id].growth_rate[year] * 100);
             }
         }
     }
