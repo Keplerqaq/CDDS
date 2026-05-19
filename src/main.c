@@ -282,12 +282,6 @@ void quick_sort_idx(SqList *L, int a[], int low, int high, int year) {
 
 void MVA_SqList_Read(SqList *L, const char *filename) {
     FILE *fp = fopen(filename, "r");
-    /* 若当前目录找不到，尝试上级目录（用户从 src/ 运行的情况） */
-    if (!fp) {
-        char alt[500];
-        snprintf(alt, sizeof(alt), "../%s", filename);
-        fp = fopen(alt, "r");
-    }
     if (!fp) { printf("打开文件失败！请确认文件路径正确。\n"); return; }
 
     int n = 0;
