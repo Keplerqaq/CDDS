@@ -173,7 +173,7 @@ add_textbox(slide, Inches(2), Inches(2.5), Inches(9.333), Inches(1.0),
 add_multiline(slide, Inches(2), Inches(3.6), Inches(9.333), Inches(2.0), [
     ("计科 241/242 班 · 第 3 组", False, 22, GRAY),
     ("指导教师：周文峰", False, 20, GRAY),
-    ("2026 年 5 月 19 日", False, 18, GRAY),
+    ("2026 年 5 月 20 日", False, 18, GRAY),
 ], align=PP_ALIGN.CENTER)
 
 add_bottom_bar(slide)
@@ -188,21 +188,23 @@ add_bottom_bar(slide)
 
 toc_items = [
     ("01", "选题的意义", "两个题目各自对应什么数据结构，综合训练价值"),
-    ("02", "问题分析", "游戏规则、数据规模、七项功能需求、核心难点"),
-    ("03", "存储结构与算法接口", "链式队列/栈、顺序表+索引数组、两种排序对比"),
-    ("04", "可行性分析", "技术准备、风险应对"),
-    ("05", "人员分工", "分工表"),
-    ("06", "预期结果", "交付物"),
+    ("02", "问题分析 · 小猫钓鱼", "游戏规则、数据结构映射、流程图"),
+    ("03", "存储结构 · 小猫钓鱼", "链式队列/栈的接口与实现"),
+    ("04", "问题分析 · 制造业统计", "数据规模、七项功能、索引数组原理"),
+    ("05", "存储结构 · 制造业统计", "顺序表+索引数组、两种排序对比"),
+    ("06", "可行性分析", "技术准备、风险应对"),
+    ("07", "人员分工", "分工表"),
+    ("08", "预期结果", "交付物"),
 ]
 
 for i, (num, title, desc) in enumerate(toc_items):
-    y = Inches(1.4) + Inches(0.9) * i
-    add_textbox(slide, Inches(1.2), y, Inches(0.8), Inches(0.7),
-                num, size=32, bold=True, color=ACCENT)
-    add_textbox(slide, Inches(2.2), y + Inches(0.05), Inches(3.0), Inches(0.45),
-                title, size=24, bold=True, color=WHITE)
-    add_textbox(slide, Inches(2.2), y + Inches(0.5), Inches(8.0), Inches(0.4),
-                desc, size=16, color=GRAY)
+    y = Inches(1.2) + Inches(0.72) * i
+    add_textbox(slide, Inches(1.2), y, Inches(0.8), Inches(0.55),
+                num, size=28, bold=True, color=ACCENT)
+    add_textbox(slide, Inches(2.2), y + Inches(0.02), Inches(3.0), Inches(0.4),
+                title, size=22, bold=True, color=WHITE)
+    add_textbox(slide, Inches(2.2), y + Inches(0.38), Inches(8.0), Inches(0.35),
+                desc, size=14, color=GRAY)
 
 # ============================================================
 # Slide 3: 选题的意义
@@ -300,6 +302,75 @@ add_textbox(slide, fx + Inches(1.2), fy + bh * 4.2, Inches(2.5), Inches(0.3),
             "否 ↓", size=13, bold=True, color=GRAY, align=PP_ALIGN.CENTER)
 add_textbox(slide, fx + Inches(2.5), fy + bh + Inches(0.2), Inches(1.0), Inches(0.3),
             "否 →", size=13, bold=True, color=GREEN, align=PP_ALIGN.LEFT)
+
+# ============================================================
+# Slide 7: 存储结构 — 小猫钓鱼（字号加大）
+# ============================================================
+slide = prs.slides.add_slide(prs.slide_layouts[6])
+set_bg(slide)
+add_title_bar(slide, "三、存储结构及接口设计 · 小猫钓鱼")
+add_bottom_bar(slide)
+
+# 链式队列
+add_textbox(slide, Inches(0.8), Inches(1.3), Inches(5.5), Inches(0.5),
+            "链式队列（手牌）", size=22, bold=True, color=YELLOW)
+code_q = """typedef struct QNode {
+    int card;
+    struct QNode *next;
+} QNode;
+
+typedef struct {
+    QNode *front;   // 队头
+    QNode *rear;    // 队尾
+} LinkQueue;
+
+void queue_init(LinkQueue *q);
+void enqueue(LinkQueue *q, int card);
+int  dequeue(LinkQueue *q);"""
+
+txBox = slide.shapes.add_textbox(Inches(0.8), Inches(1.8), Inches(5.5), Inches(3.5))
+tf = txBox.text_frame
+tf.word_wrap = True
+p = tf.paragraphs[0]
+p.text = code_q
+p.font.size = Pt(15)
+p.font.color.rgb = GREEN
+p.font.name = "Courier New"
+
+# 链式栈
+add_textbox(slide, Inches(7.0), Inches(1.3), Inches(5.5), Inches(0.5),
+            "链式栈（桌面牌堆）", size=22, bold=True, color=YELLOW)
+code_s = """typedef struct SNode {
+    int card;
+    struct SNode *next;
+} SNode;
+
+typedef struct {
+    SNode *top;     // 栈顶
+} LinkStack;
+
+void stack_init(LinkStack *s);
+void push(LinkStack *s, int card);
+int  pop(LinkStack *s);"""
+
+txBox = slide.shapes.add_textbox(Inches(7.0), Inches(1.8), Inches(5.5), Inches(3.5))
+tf = txBox.text_frame
+tf.word_wrap = True
+p = tf.paragraphs[0]
+p.text = code_s
+p.font.size = Pt(15)
+p.font.color.rgb = GREEN
+p.font.name = "Courier New"
+
+# 底部
+add_rounded_box(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(1.3),
+                fill_color=TABLE_H)
+add_textbox(slide, Inches(1.2), Inches(5.4), Inches(11.0), Inches(0.4),
+            "选型理由", size=18, bold=True, color=ACCENT)
+add_multiline(slide, Inches(1.2), Inches(5.8), Inches(11.0), Inches(0.8), [
+    ("数组队列 → 假溢出；链式队列 → 动态分配，无容量上限", False, 15, GRAY),
+    ("数组栈   → 需预设容量；链式栈   → 按需分配，桌面牌数动态增减", False, 15, GRAY),
+])
 
 # ============================================================
 # Slide 5: 问题分析 — 制造业统计（含数据流图）
@@ -407,75 +478,6 @@ add_multiline(slide, Inches(1.2), Inches(5.4), Inches(10.5), Inches(1.2), [
     ("r[idx[0]] = r[1] = 美国 8000 → 第 1 名    |    r[idx[1]] = r[0] = 中国 5000 → 第 2 名", False, 15, GRAY),
     ("r[idx[2]] = r[3] = 日本 4000 → 第 3 名    |    r[idx[3]] = r[4] = 德国 3000 → 第 4 名", False, 15, GRAY),
     ("只交换 idx[] 中的整数下标，r[] 的物理顺序从未改变 ✓", True, 15, ACCENT),
-])
-
-# ============================================================
-# Slide 7: 存储结构 — 小猫钓鱼（字号加大）
-# ============================================================
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_bg(slide)
-add_title_bar(slide, "三、存储结构及接口设计 · 小猫钓鱼")
-add_bottom_bar(slide)
-
-# 链式队列
-add_textbox(slide, Inches(0.8), Inches(1.3), Inches(5.5), Inches(0.5),
-            "链式队列（手牌）", size=22, bold=True, color=YELLOW)
-code_q = """typedef struct QNode {
-    int card;
-    struct QNode *next;
-} QNode;
-
-typedef struct {
-    QNode *front;   // 队头
-    QNode *rear;    // 队尾
-} LinkQueue;
-
-void queue_init(LinkQueue *q);
-void enqueue(LinkQueue *q, int card);
-int  dequeue(LinkQueue *q);"""
-
-txBox = slide.shapes.add_textbox(Inches(0.8), Inches(1.8), Inches(5.5), Inches(3.5))
-tf = txBox.text_frame
-tf.word_wrap = True
-p = tf.paragraphs[0]
-p.text = code_q
-p.font.size = Pt(15)
-p.font.color.rgb = GREEN
-p.font.name = "Courier New"
-
-# 链式栈
-add_textbox(slide, Inches(7.0), Inches(1.3), Inches(5.5), Inches(0.5),
-            "链式栈（桌面牌堆）", size=22, bold=True, color=YELLOW)
-code_s = """typedef struct SNode {
-    int card;
-    struct SNode *next;
-} SNode;
-
-typedef struct {
-    SNode *top;     // 栈顶
-} LinkStack;
-
-void stack_init(LinkStack *s);
-void push(LinkStack *s, int card);
-int  pop(LinkStack *s);"""
-
-txBox = slide.shapes.add_textbox(Inches(7.0), Inches(1.8), Inches(5.5), Inches(3.5))
-tf = txBox.text_frame
-tf.word_wrap = True
-p = tf.paragraphs[0]
-p.text = code_s
-p.font.size = Pt(15)
-p.font.color.rgb = GREEN
-p.font.name = "Courier New"
-
-# 底部
-add_rounded_box(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(1.3),
-                fill_color=TABLE_H)
-add_textbox(slide, Inches(1.2), Inches(5.4), Inches(11.0), Inches(0.4),
-            "选型理由", size=18, bold=True, color=ACCENT)
-add_multiline(slide, Inches(1.2), Inches(5.8), Inches(11.0), Inches(0.8), [
-    ("数组队列 → 假溢出；链式队列 → 动态分配，无容量上限", False, 15, GRAY),
-    ("数组栈   → 需预设容量；链式栈   → 按需分配，桌面牌数动态增减", False, 15, GRAY),
 ])
 
 # ============================================================
@@ -649,7 +651,9 @@ add_textbox(slide, Inches(0.8), Inches(1.3), Inches(5.5), Inches(0.5),
 
 div_headers = ["姓名", "分工内容"]
 div_rows = [
-    ["Keplerqaq", "总体设计 + 题目一（队列/栈/博弈逻辑）\n+ 题目二（排序算法/索引数组/数据分析）\n+ 测试 + 实验报告"],
+    ["Keplerqaq", "总体设计 + 题目二排序算法（快排/选择排序）\n+ 索引数组实现 + 程序整合与测试"],
+    ["张明远", "题目一：小猫钓鱼游戏\n链式队列与链式栈的设计实现 + 博弈逻辑编码"],
+    ["李思涵", "题目二：数据导入/查询/增速计算\n增加值分析 + 结果保存 + 实验报告撰写"],
 ]
 div_w = [Inches(2.0), Inches(9.5)]
 
@@ -661,16 +665,17 @@ for c, (hdr, w) in enumerate(zip(div_headers, div_w)):
                 hdr, size=16, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 
 for r, row in enumerate(div_rows):
-    y = Inches(2.3) + Inches(0.55) * r
+    y = Inches(1.8) + Inches(0.85) * r
     for c, (cell, w) in enumerate(zip(row, div_w)):
         x = Inches(0.8) + sum(div_w[:c])
         bg = TABLE_H if r % 2 == 0 else BG_DARK
-        add_rounded_box(slide, x, y, w, Inches(1.0), fill_color=bg)
+        add_rounded_box(slide, x, y, w, Inches(0.8), fill_color=bg)
         lines = cell.split("\n")
+        nlines = len(lines)
         for li, line in enumerate(lines):
-            add_textbox(slide, x + Inches(0.15), y + Inches(0.05 + 0.3 * li),
-                        w - Inches(0.2), Inches(0.3),
-                        line, size=14, color=GRAY if li > 0 else WHITE,
+            add_textbox(slide, x + Inches(0.15), y + Inches(0.08 + 0.28 * li),
+                        w - Inches(0.2), Inches(0.25),
+                        line, size=13, color=GRAY if li > 0 else WHITE,
                         bold=(li == 0))
 
 
