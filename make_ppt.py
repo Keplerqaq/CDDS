@@ -249,10 +249,18 @@ set_bg(slide)
 add_title_bar(slide, "二、问题分析 · 小猫钓鱼游戏")
 add_bottom_bar(slide)
 
+# 题干
+add_rounded_box(slide, Inches(0.6), Inches(1.3), Inches(12.1), Inches(1.4), fill_color=TABLE_H)
+add_multiline(slide, Inches(0.9), Inches(1.4), Inches(11.5), Inches(1.2), [
+    ("题干：将一副扑克牌（牌面1-9）平分两份，甲乙交替出牌。若打出的牌与桌上某张相同，", False, 13, GRAY),
+    ("      则两张相同牌及中间所夹的牌全部取走并放入手牌末尾。一方手牌出完则对手获胜。", False, 13, GRAY),
+    ("      要求：模拟游戏过程，判断胜者，打印获胜方手牌及桌面剩余牌。", False, 13, GRAY),
+], spacing=0.8)
+
 # 左侧：流程文字
-add_textbox(slide, Inches(0.8), Inches(1.4), Inches(4.0), Inches(0.5),
-            "游戏流程", size=22, bold=True, color=ACCENT)
-add_multiline(slide, Inches(0.8), Inches(1.9), Inches(5.2), Inches(4.5), [
+add_textbox(slide, Inches(0.8), Inches(2.9), Inches(4.0), Inches(0.5),
+            "游戏流程", size=20, bold=True, color=ACCENT)
+add_multiline(slide, Inches(0.8), Inches(3.4), Inches(5.2), Inches(3.5), [
     ("① 洗牌：N 张牌（1-9）随机打乱，平分给甲乙", False, 16, GRAY),
     ("② 甲先出一张牌 → 放到桌面", False, 16, GRAY),
     ("③ 交替出牌，每轮判断：", False, 16, GRAY),
@@ -264,9 +272,9 @@ add_multiline(slide, Inches(0.8), Inches(1.9), Inches(5.2), Inches(4.5), [
 
 # 右侧：流程图
 fx = Inches(6.0)
-fy = Inches(1.4)
+fy = Inches(2.9)
 bw = Inches(2.5)
-bh = Inches(0.8)
+bh = Inches(0.7)
 gap = Inches(0.15)
 
 # 出牌
@@ -376,8 +384,15 @@ set_bg(slide)
 add_title_bar(slide, "四、问题分析 · 制造业增加值统计分析系统")
 add_bottom_bar(slide)
 
-add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.4),
-            "数据规模：96 个国家 × 21 年（1999–2019）× 4 个收入等级", size=18, color=GRAY)
+# 题干
+add_rounded_box(slide, Inches(0.6), Inches(1.3), Inches(12.1), Inches(0.8), fill_color=TABLE_H)
+add_multiline(slide, Inches(0.9), Inches(1.35), Inches(11.5), Inches(0.7), [
+    ("题干：根据1999~2019年世界各国制造业增加值数据，编程实现统计分析系统，包括数据导入、查询、", False, 13, GRAY),
+    ("      增速计算、增加值排名、增速排名、增加值分析、排名结果保存等功能。", False, 13, GRAY),
+], spacing=0.8)
+
+add_textbox(slide, Inches(0.8), Inches(2.25), Inches(11.0), Inches(0.3),
+            "数据规模：96 个国家 × 21 年（1999–2019）× 4 个收入等级", size=16, color=GRAY)
 
 # 七项功能
 funcs = [
@@ -391,7 +406,7 @@ funcs = [
 ]
 
 for i, (name, desc, note) in enumerate(funcs):
-    y = Inches(1.8) + Inches(0.52) * i
+    y = Inches(2.7) + Inches(0.48) * i
     add_textbox(slide, Inches(0.8), y, Inches(2.2), Inches(0.35),
                 name, size=14, bold=True, color=WHITE)
     add_textbox(slide, Inches(3.1), y, Inches(5.3), Inches(0.35),
@@ -400,9 +415,9 @@ for i, (name, desc, note) in enumerate(funcs):
                 note, size=12, color=GRAY)
 
 # 底部数据流
-flow_y = Inches(5.6)
-add_textbox(slide, Inches(0.8), Inches(5.2), Inches(5.0), Inches(0.35),
-            "数据流关系", size=18, bold=True, color=ACCENT)
+flow_y = Inches(6.1)
+add_textbox(slide, Inches(0.8), Inches(5.7), Inches(5.0), Inches(0.35),
+            "数据流关系", size=16, bold=True, color=ACCENT)
 
 flow_steps = [
     ("① 读", GREEN),
