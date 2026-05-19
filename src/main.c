@@ -3,19 +3,6 @@
 #include <string.h>
 #include <time.h>
 
-/* ====================================================================
- * 数据结构课程设计 — 第 3 组
- *
- * 题目一：小猫钓鱼游戏
- *   链式队列（手牌）+ 链式栈（桌面）+ table_flag[10] 布尔标记
- *
- * 题目二：世界各国制造业增加值统计分析系统
- *   顺序表 + 索引数组（不改变原始顺序，不新建记录序列）
- *   96 个国家，1999-2019 共 21 年数据
- * ==================================================================== */
-
-/* ========================= 题目一：小猫钓鱼 ========================= */
-
 typedef struct QNode {
     int card;
     struct QNode *next;
@@ -222,39 +209,29 @@ void fish_game(void) {
     stack_destroy(&table);
 }
 
-/* ========================= 题目二：制造业增加值统计 =================== */
-
 #define MAXSIZE 96
-#define YEARS   21          /* 1999-2019 */
+#define YEARS   21          
 
 typedef struct {
-    char  country[30];               /* 国家名 */
-    int   country_type;              /* 0=低收入 1=中低等收入 2=中高等收入 3=高收入 */
-    float value_added[YEARS];        /* 制造业增加值（亿美元） */
-    float growth_rate[YEARS];        /* 增速（下标0对应1999年，仅2000-2019有效） */
-    int   year[YEARS];               /* 年份标签 */
-    int   index_va[YEARS];           /* 增加值排名索引（逐年） */
-    int   index_gr[YEARS];           /* 增速排名索引（逐年） */
+    char  country[30];               
+    int   country_type;              
+    float value_added[YEARS];        
+    float growth_rate[YEARS];        
+    int   year[YEARS];               
+    int   index_va[YEARS];           
+    int   index_gr[YEARS];           
 } RecType;
 
-/* 顺序表。
- * r[0] 为第一个国家，下标 0..length-1 对应 96 国。
- * 设计要点：排序不改变原始记录顺序，排序结果存在 index_va/index_gr 索引里。 */
 typedef struct {
     RecType r[MAXSIZE];
-    int     index_l[MAXSIZE];    /* 低收入国家在 r[] 中的下标 */
-    int     index_ml[MAXSIZE];   /* 中低等收入 */
-    int     index_mh[MAXSIZE];   /* 中高等收入 */
-    int     index_h[MAXSIZE];    /* 高收入 */
+    int     index_l[MAXSIZE];    
+    int     index_ml[MAXSIZE];   
+    int     index_mh[MAXSIZE];   
+    int     index_h[MAXSIZE];    
     int     length;
-    int     count_l, count_ml, count_mh, count_h;  /* 各组国家数 */
+    int     count_l, count_ml, count_mh, count_h;  
     int     growth_done;
 } SqList;
-
-/* ==================== 快速排序（用于增加值排名） ====================
- *
- * 对索引数组排序。比较的是 r[索引].value_added[year]，交换的只是索引。
- * 记录数组 r[] 完全不动。降序（增加值大的排前面）。 */
 
 int partition(SqList *L, int a[], int low, int high, int year) {
     int pivot = a[low];
@@ -277,8 +254,6 @@ void quick_sort_idx(SqList *L, int a[], int low, int high, int year) {
         quick_sort_idx(L, a, p + 1, high, year);
     }
 }
-
-/* ==================== ① 数据导入 ==================== */
 
 void MVA_SqList_Read(SqList *L, const char *filename) {
     FILE *fp = fopen(filename, "r");
@@ -311,8 +286,6 @@ void MVA_SqList_Read(SqList *L, const char *filename) {
     printf("导入成功，共 %d 个国家。\n", L->length);
 }
 
-/* ==================== ② 查询 ==================== */
-
 void MVA_SqList_Search(SqList *L) {
     char name[30];
     int  year;
@@ -342,15 +315,9 @@ void MVA_SqList_Search(SqList *L) {
     printf("\n");
 }
 
-/* ==================== ③ 增速计算 ====================
- *
- * 公式: growth_rate[year] = (value[year] - value[year-1]) / value[year-1]
- * 若 value[year-1] == 0，则 growth_rate[year] = 0
- * growth_rate[0]（1999年）保持为 0，增速从 2000 年开始有效。 */
-
 void MVA_SqList_Calculate(SqList *L) {
     for (int i = 0; i < L->length; i++) {
-        L->r[i].growth_rate[0] = 0;  /* 1999 年无前值 */
+        L->r[i].growth_rate[0] = 0;  
         for (int k = 1; k < YEARS; k++) {
             float prev = L->r[i].value_added[k - 1];
             if (prev == 0)
@@ -364,26 +331,19 @@ void MVA_SqList_Calculate(SqList *L) {
     printf("增速计算完成。\n");
 }
 
-/* ==================== ④ 增加值排名（快速排序） ====================
- *
- * 逐年对所有国家按增加值降序排，结果存入 index_va。
- * 使用快速排序 —— 与⑤增速排名使用的选择排序不同，满足"不同算法"要求。 */
-
 void MVA_SqList_Sort_Va(SqList *L) {
-    int idx_arr[MAXSIZE];   /* 临时索引数组，用于快排 */
+    int idx_arr[MAXSIZE];   
 
     for (int year = 0; year < YEARS; year++) {
-        /* 初始化索引：0, 1, ..., length-1 */
+
         for (int i = 0; i < L->length; i++)
             idx_arr[i] = i;
 
         quick_sort_idx(L, idx_arr, 0, L->length - 1, year);
 
-        /* 将排序结果存入每个记录的 index_va */
         for (int rank = 0; rank < L->length; rank++)
             L->r[idx_arr[rank]].index_va[year] = rank + 1;
 
-        /* 打印全部排名 */
         printf("\n%d 年增加值排名:\n", 1999 + year);
         printf("%-4s %-20s %12s\n", "名次", "国家", "增加值（亿美元）");
         for (int j = 0; j < L->length; j++) {
@@ -394,19 +354,11 @@ void MVA_SqList_Sort_Va(SqList *L) {
     }
 }
 
-/* ==================== ⑤ 增速排名（选择排序、分组） ====================
- *
- * 先按收入等级分四组 → 各组逐年按增速降序排 → 结果存入 index_gr。
- * 使用选择排序 —— 与④使用的快速排序不同。
- *
- * 收入等级分组逻辑：四组下标分别存入 index_l/mh/mh/h，计数存入 count_l/ml/mh/h */
-
 void group_sort_select(SqList *L, int *group, int group_size,
                        int *result_idx, int year) {
     for (int i = 0; i < group_size; i++)
         result_idx[i] = group[i];
 
-    /* 选择排序（降序，按增速） */
     for (int i = 0; i < group_size - 1; i++) {
         int max = i;
         for (int j = i + 1; j < group_size; j++) {
@@ -426,7 +378,6 @@ void MVA_SqList_Sort_Gr(SqList *L) {
     if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
     int temp_rank[MAXSIZE];
 
-    /* ① 将各国按收入等级分组 */
     L->count_l = L->count_ml = L->count_mh = L->count_h = 0;
     for (int i = 0; i < L->length; i++) {
         switch (L->r[i].country_type) {
@@ -437,7 +388,6 @@ void MVA_SqList_Sort_Gr(SqList *L) {
         }
     }
 
-    /* ② 初始化各记录的 index_gr */
     for (int i = 0; i < L->length; i++)
         for (int year = 0; year < YEARS; year++)
             L->r[i].index_gr[year] = i;
@@ -446,17 +396,14 @@ void MVA_SqList_Sort_Gr(SqList *L) {
     int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
     int   sizes[]      = {L->count_l, L->count_ml, L->count_mh, L->count_h};
 
-    /* ③ 逐年分组排序并输出 */
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
             if (sizes[g] == 0) continue;
             group_sort_select(L, groups[g], sizes[g], temp_rank, year);
 
-            /* 将排名写回 index_gr */
             for (int rank = 0; rank < sizes[g]; rank++)
                 L->r[temp_rank[rank]].index_gr[year] = rank + 1;
 
-            /* 打印前 3 */
             printf("\n%d年 %s国家 增速排名:\n",
                    1999 + year, type_name[g]);
             for (int j = 0; j < sizes[g]; j++) {
@@ -468,11 +415,6 @@ void MVA_SqList_Sort_Gr(SqList *L) {
         }
     }
 }
-
-/* ==================== ⑥ 增加值分析 ====================
- *
- * 对指定国家，计算增加值和增速的 min/max/均值/方差。
- * 方差使用样本方差公式: S² = Σ(Xi - X̄)² / (n-1) */
 
 void MVA_SqList_Analyze(SqList *L) {
     if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
@@ -488,7 +430,6 @@ void MVA_SqList_Analyze(SqList *L) {
 
     RecType *rec = &L->r[i];
 
-    /* 遍历 21 年数据，求增加值的 min/max/和/平方和 */
     float min_va = rec->value_added[0], max_va = rec->value_added[0];
     float sum_va = 0, sum_sq_va = 0;
     float min_gr = rec->growth_rate[0], max_gr = rec->growth_rate[0];
@@ -509,12 +450,11 @@ void MVA_SqList_Analyze(SqList *L) {
     float avg_va = sum_va / YEARS;
     float avg_gr = sum_gr / YEARS;
 
-    /* 计算方差 */
     for (int k = 0; k < YEARS; k++) {
         sum_sq_va += (rec->value_added[k] - avg_va) * (rec->value_added[k] - avg_va);
         sum_sq_gr += (rec->growth_rate[k] - avg_gr) * (rec->growth_rate[k] - avg_gr);
     }
-    float var_va = sum_sq_va / (YEARS - 1);  /* 样本方差 */
+    float var_va = sum_sq_va / (YEARS - 1);  
     float var_gr = sum_sq_gr / (YEARS - 1);
 
     printf("\n%s 1999-2019 年制造业统计分析：\n", name);
@@ -523,20 +463,16 @@ void MVA_SqList_Analyze(SqList *L) {
     printf("  增速   — 最小值: %.2f%%, 最大值: %.2f%%, 均值: %.2f%%, 方差: %.6f\n",
            min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
 
-    /* 方差解读 */
     if (var_va > 1e6)
         printf("  → 该国制造业增加值波动很大，发展不稳定。\n");
     else if (var_va < 1e3)
         printf("  → 该国制造业增加值波动较小，发展较平稳。\n");
 }
 
-/* ==================== ⑦ 保存排名结果 ==================== */
-
 void MVA_SqList_Save(SqList *L, const char *src_name) {
     char file_va[300], file_gr[300];
     FILE *fp;
 
-    /* 若尚未排名，自动执行 */
     if (L->r[0].index_va[0] == 0) {
         printf("（自动执行增加值排名...）\n");
         MVA_SqList_Sort_Va(L);
@@ -546,19 +482,17 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
         MVA_SqList_Sort_Gr(L);
     }
 
-    /* 生成输出文件名：去掉 .txt 后加 _Sorted / _Grouped_Sorted */
     int len = (int)strlen(src_name);
     strncpy(file_va, src_name, len - 4); file_va[len - 4] = '\0';
     strncpy(file_gr, src_name, len - 4); file_gr[len - 4] = '\0';
     strcat(file_va, "_Sorted.txt");
     strcat(file_gr, "_Grouped_Sorted.txt");
 
-    /* 保存增加值排名（按年） */
     fp = fopen(file_va, "w");
     if (!fp) { printf("无法创建文件 %s\n", file_va); return; }
     int rank_idx[MAXSIZE];
     for (int year = 0; year < YEARS; year++) {
-        /* 预建排名→国家下标映射，避免 O(n²) 扫描 */
+
         for (int i = 0; i < L->length; i++)
             rank_idx[L->r[i].index_va[year] - 1] = i;
 
@@ -572,7 +506,6 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     }
     fclose(fp);
 
-    /* 保存增速排名（分组） */
     fp = fopen(file_gr, "w");
     if (!fp) { printf("无法创建文件 %s\n", file_gr); return; }
 
@@ -583,7 +516,7 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
             if (sizes[g] == 0) continue;
-            /* 预建组内排名→成员下标映射 */
+
             for (int j = 0; j < sizes[g]; j++) {
                 int id = groups[g][j];
                 rank_idx[L->r[id].index_gr[year] - 1] = id;
@@ -606,8 +539,6 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
     printf("  增加值排名 → %s\n", file_va);
     printf("  增速排名   → %s\n", file_gr);
 }
-
-/* ==================== 制造业统计主菜单 ==================== */
 
 int MVA_Menu_Show(void) {
     printf("\n========== 世界各国制造业增加值统计分析系统 ==========\n");
@@ -641,7 +572,7 @@ void manufacturing_system(void) {
                 return;
             case 1:
                 printf("请输入数据文件名（默认: 制造业分析_inputdate.txt）：");
-                getchar();  /* 消耗上一次 scanf 遗留的换行符 */
+                getchar();  
                 {
                     char tmp[300];
                     fgets(tmp, sizeof(tmp), stdin);
@@ -678,8 +609,6 @@ void manufacturing_system(void) {
         }
     }
 }
-
-/* ========================= 主菜单 ========================== */
 
 int main(void) {
     while (1) {
