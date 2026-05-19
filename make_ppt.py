@@ -257,8 +257,8 @@ add_bottom_bar(slide)
 add_rounded_box(slide, Inches(0.6), Inches(1.3), Inches(12.1), Inches(1.4), fill_color=TABLE_H)
 add_multiline(slide, Inches(0.9), Inches(1.4), Inches(11.5), Inches(1.2), [
     ("将一副扑克牌（牌面1-9）平分两份，甲乙交替出牌。若打出的牌与桌上某张相同，", False, 13, GRAY),
-    ("      则两张相同牌及中间所夹的牌全部取走并放入手牌末尾。一方手牌出完则对手获胜。", False, 13, GRAY),
-    ("      要求：模拟游戏过程，判断胜者，打印获胜方手牌及桌面剩余牌。", False, 13, GRAY),
+    ("则两张相同牌及中间所夹的牌全部取走并放入手牌末尾。一方手牌出完则对手获胜。", False, 13, GRAY),
+    ("要求：模拟游戏过程，判断胜者，打印获胜方手牌及桌面剩余牌。", False, 13, GRAY),
 ], spacing=0.8)
 
 # 左侧：流程文字
