@@ -22,8 +22,10 @@ GRAY     = RGBColor(0xAA, 0xAA, 0xAA)
 YELLOW   = RGBColor(0xFF, 0xD5, 0x4F)
 GREEN    = RGBColor(0x81, 0xC7, 0x84)
 RED      = RGBColor(0xE8, 0x6A, 0x6A)
+ORANGE   = RGBColor(0xFF, 0xAB, 0x40)
 TABLE_H  = RGBColor(0x2A, 0x2A, 0x42)
-TABLE_B  = RGBColor(0x35, 0x35, 0x55)
+QS_COLOR = RGBColor(0x42, 0xA5, 0xF5)   # 快排蓝
+SS_COLOR = RGBColor(0xFF, 0xA7, 0x26)   # 选择排序橙
 
 
 def set_bg(slide, color=BG_DARK):
@@ -34,7 +36,6 @@ def set_bg(slide, color=BG_DARK):
 
 
 def add_title_bar(slide, text, y=Inches(0), h=Inches(1.1)):
-    """顶部蓝色标题栏"""
     shape = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE, Inches(0), y, W, h)
     shape.fill.solid()
@@ -70,7 +71,6 @@ def add_textbox(slide, left, top, width, height, text, size=20, bold=False,
 def add_multiline(slide, left, top, width, height, lines, size=20,
                   color=WHITE, spacing=1.3, font_name="微软雅黑",
                   align=PP_ALIGN.LEFT):
-    """lines 是 list of (text, bold, size_override, color_override)"""
     txBox = slide.shapes.add_textbox(left, top, width, height)
     tf = txBox.text_frame
     tf.word_wrap = True
@@ -106,6 +106,36 @@ def add_rounded_box(slide, left, top, width, height, fill_color=TABLE_H):
     return shape
 
 
+def add_arrow(slide, left, top, width, height, color=GRAY):
+    """画一个右箭头"""
+    shape = slide.shapes.add_shape(
+        MSO_SHAPE.RIGHT_ARROW, left, top, width, height)
+    shape.fill.solid()
+    shape.fill.fore_color.rgb = color
+    shape.line.fill.background()
+    return shape
+
+
+def add_rect(slide, left, top, width, height, fill_color, text="",
+             size=14, color=WHITE, bold=False):
+    shape = slide.shapes.add_shape(
+        MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
+    shape.fill.solid()
+    shape.fill.fore_color.rgb = fill_color
+    shape.line.fill.background()
+    if text:
+        tf = shape.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.text = text
+        p.font.size = Pt(size)
+        p.font.bold = bold
+        p.font.color.rgb = color
+        p.font.name = "微软雅黑"
+        p.alignment = PP_ALIGN.CENTER
+    return shape
+
+
 def add_bottom_bar(slide, text="数据结构课程设计 · 第3组 · 开题答辩"):
     shape = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE, Inches(0), H - Inches(0.4), W, Inches(0.4))
@@ -123,10 +153,9 @@ def add_bottom_bar(slide, text="数据结构课程设计 · 第3组 · 开题答
 # ============================================================
 # Slide 1: 封面
 # ============================================================
-slide = prs.slides.add_slide(prs.slide_layouts[6])  # blank
+slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
 
-# 装饰线
 slide.shapes.add_shape(MSO_SHAPE.RECTANGLE,
                        Inches(2), Inches(2.2), Inches(9.333), Pt(3),
                        ).fill.solid()
@@ -161,12 +190,13 @@ toc_items = [
     ("01", "选题的意义", "两个题目各自对应什么数据结构，综合训练价值"),
     ("02", "问题分析", "游戏规则、数据规模、七项功能需求、核心难点"),
     ("03", "存储结构与算法接口", "链式队列/栈、顺序表+索引数组、两种排序对比"),
-    ("04", "可行性分析", "技术准备、时间安排、风险应对"),
-    ("05", "人员分工与预期结果", "分工表、交付物、进度"),
+    ("04", "可行性分析", "技术准备、风险应对"),
+    ("05", "人员分工", "分工表"),
+    ("06", "预期结果", "交付物"),
 ]
 
 for i, (num, title, desc) in enumerate(toc_items):
-    y = Inches(1.6) + Inches(1.1) * i
+    y = Inches(1.4) + Inches(0.9) * i
     add_textbox(slide, Inches(1.2), y, Inches(0.8), Inches(0.7),
                 num, size=32, bold=True, color=ACCENT)
     add_textbox(slide, Inches(2.2), y + Inches(0.05), Inches(3.0), Inches(0.45),
@@ -183,9 +213,9 @@ add_title_bar(slide, "一、选题的意义")
 add_bottom_bar(slide)
 
 # 左：小猫钓鱼
-box1 = add_rounded_box(slide, Inches(0.6), Inches(1.5), Inches(5.8), Inches(5.0))
+add_rounded_box(slide, Inches(0.6), Inches(1.5), Inches(5.8), Inches(5.0))
 add_textbox(slide, Inches(1.0), Inches(1.7), Inches(5.0), Inches(0.6),
-            "🐱 小猫钓鱼游戏", size=26, bold=True, color=YELLOW)
+            "小猫钓鱼游戏", size=26, bold=True, color=YELLOW)
 add_multiline(slide, Inches(1.0), Inches(2.4), Inches(5.0), Inches(3.5), [
     ("核心数据结构：链式队列 + 链式栈", True, 18, WHITE),
     ("", False, 8, WHITE),
@@ -198,9 +228,9 @@ add_multiline(slide, Inches(1.0), Inches(2.4), Inches(5.0), Inches(3.5), [
 ])
 
 # 右：制造业
-box2 = add_rounded_box(slide, Inches(6.8), Inches(1.5), Inches(5.8), Inches(5.0))
+add_rounded_box(slide, Inches(6.8), Inches(1.5), Inches(5.8), Inches(5.0))
 add_textbox(slide, Inches(7.2), Inches(1.7), Inches(5.0), Inches(0.6),
-            "🏭 制造业统计分析系统", size=26, bold=True, color=GREEN)
+            "制造业统计分析系统", size=26, bold=True, color=GREEN)
 add_multiline(slide, Inches(7.2), Inches(2.4), Inches(5.0), Inches(3.5), [
     ("核心结构：顺序表 + 索引数组", True, 18, WHITE),
     ("", False, 8, WHITE),
@@ -212,143 +242,175 @@ add_multiline(slide, Inches(7.2), Inches(2.4), Inches(5.0), Inches(3.5), [
 ])
 
 # ============================================================
-# Slide 4: 问题分析 — 小猫钓鱼
+# Slide 4: 问题分析 — 小猫钓鱼（含流程图）
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
 add_title_bar(slide, "二、问题分析 · 小猫钓鱼游戏")
 add_bottom_bar(slide)
 
-# 左侧：流程
-add_textbox(slide, Inches(0.8), Inches(1.4), Inches(3.0), Inches(0.5),
-            "游戏流程", size=24, bold=True, color=ACCENT)
-add_multiline(slide, Inches(0.8), Inches(2.0), Inches(5.5), Inches(4.5), [
-    ("① 洗牌 — N 张牌（1-9）随机打乱，平分给甲乙", False, 17, GRAY),
-    ("② 甲先出一张牌 → 放到桌面（入栈）", False, 17, GRAY),
-    ("③ 交替进行，每轮出牌后判断：", False, 17, GRAY),
-    ("", False, 6, WHITE),
-    ("  ✅ 桌面上没有这张牌", True, 17, GREEN),
-    ("     → 压栈，table_flag[card] = 1", False, 16, GRAY),
-    ("", False, 6, WHITE),
-    ("  ⚠️ 桌面上已有这张牌", True, 17, RED),
-    ("     → 自己出的牌先入队尾", False, 16, GRAY),
-    ("     → 从栈顶连续出栈并入队尾", False, 16, GRAY),
-    ("     → 遇到匹配的旧牌后停止", False, 16, GRAY),
-    ("", False, 6, WHITE),
-    ("④ 一方手牌为空 → 游戏结束，宣布胜者", False, 17, GRAY),
-    ("⑤ 回合上限保护，防止无限对局", False, 17, GRAY),
+# 左侧：流程文字
+add_textbox(slide, Inches(0.8), Inches(1.4), Inches(4.0), Inches(0.5),
+            "游戏流程", size=22, bold=True, color=ACCENT)
+add_multiline(slide, Inches(0.8), Inches(1.9), Inches(5.2), Inches(4.5), [
+    ("① 洗牌：N 张牌（1-9）随机打乱，平分给甲乙", False, 16, GRAY),
+    ("② 甲先出一张牌 → 放到桌面", False, 16, GRAY),
+    ("③ 交替出牌，每轮判断：", False, 16, GRAY),
+    ("   ✅ 桌面无此牌 → 压栈，标记置 1", False, 15, GREEN),
+    ("   ⚠️ 桌面有此牌 → 自己牌入队尾", False, 15, RED),
+    ("      → 栈顶连续出栈入队尾，到匹配牌为止", False, 15, RED),
+    ("④ 一方手牌为空 → 对手获胜", False, 16, GRAY),
+    ("⑤ 回合上限防止无限对局", False, 16, GRAY),
 ])
 
-# 右侧：数据结构映射
-add_textbox(slide, Inches(7.0), Inches(1.4), Inches(5.5), Inches(0.5),
-            "数据结构映射关系", size=24, bold=True, color=ACCENT)
+# 右侧：流程图
+fx = Inches(6.0)
+fy = Inches(1.4)
+bw = Inches(2.5)
+bh = Inches(0.8)
+gap = Inches(0.15)
 
-mappings = [
-    ("手牌操作", "出牌从前出、收牌加后面",
-     "队列 (Queue)", "FIFO — 出队头 / 入队尾"),
-    ("桌面牌叠", "放牌叠上去、收牌从顶上拿",
-     "栈 (Stack)", "LIFO — 压栈 / 出栈"),
-    ("判重", "查这张牌桌面上有没有",
-     "标记数组", "table_flag[10]，O(1)"),
-    ("玩家", "二人交替出牌",
-     "两个队列", "queue_a / queue_b"),
-]
+# 出牌
+add_rect(slide, fx + Inches(1.2), fy, bw, bh, TABLE_H, "出一张牌", 16, WHITE, True)
+# 判重（菱形用矩形代替）
+add_rect(slide, fx + Inches(1.2), fy + bh + gap, bw, bh,
+         ACCENT, "桌上有此牌？", 15, WHITE, True)
 
-for i, (scene, desc, ds, reason) in enumerate(mappings):
-    y = Inches(2.1) + Inches(1.2) * i
-    box = add_rounded_box(slide, Inches(7.0), y, Inches(5.5), Inches(1.05),
-                          fill_color=TABLE_H)
-    add_textbox(slide, Inches(7.2), y + Inches(0.05), Inches(1.5), Inches(0.35),
-                scene, size=14, bold=True, color=ACCENT)
-    add_textbox(slide, Inches(8.8), y + Inches(0.05), Inches(3.5), Inches(0.35),
-                desc, size=13, color=GRAY)
-    add_textbox(slide, Inches(7.2), y + Inches(0.45), Inches(1.5), Inches(0.35),
-                f"→ {ds}", size=14, bold=True, color=YELLOW)
-    add_textbox(slide, Inches(8.8), y + Inches(0.45), Inches(3.5), Inches(0.35),
-                reason, size=13, color=GRAY)
+# 无匹配 → 压栈
+add_arrow(slide, fx + Inches(3.4), fy + bh + gap, Inches(0.5), bh, GREEN)
+add_rect(slide, fx + Inches(3.9), fy + bh + gap, Inches(1.8), bh,
+         RGBColor(0x2E, 0x7D, 0x32), "压栈 + 标记", 14, WHITE)
+
+# 有匹配 → 收牌
+add_arrow(slide, fx + Inches(1.2), fy + bh * 2 + gap * 2, Inches(0.0), Inches(0.01), GRAY)
+add_rect(slide, fx + Inches(1.2), fy + bh * 3 + gap * 2, bw, bh * 1.3,
+         RGBColor(0xC6, 0x28, 0x28), "收牌入队尾\n(栈顶出到匹配)", 13, WHITE)
+
+# 判胜负
+add_rect(slide, fx + Inches(1.2), fy + bh * 4.5 + gap * 3, bw, bh,
+         TABLE_H, "手牌为空？", 15, WHITE, True)
+add_arrow(slide, fx + Inches(3.4), fy + bh * 4.5 + gap * 3, Inches(0.5), bh, YELLOW)
+add_rect(slide, fx + Inches(3.9), fy + bh * 4.5 + gap * 3, Inches(1.8), bh,
+         YELLOW, "对手获胜", 14, BG_DARK, True)
+
+# 连接箭头
+add_textbox(slide, fx + Inches(1.2), fy + bh * 2.2, Inches(2.5), Inches(0.3),
+            "是 ↓", size=13, bold=True, color=RED, align=PP_ALIGN.CENTER)
+add_textbox(slide, fx + Inches(1.2), fy + bh * 4.2, Inches(2.5), Inches(0.3),
+            "否 ↓", size=13, bold=True, color=GRAY, align=PP_ALIGN.CENTER)
+add_textbox(slide, fx + Inches(2.5), fy + bh + Inches(0.2), Inches(1.0), Inches(0.3),
+            "否 →", size=13, bold=True, color=GREEN, align=PP_ALIGN.LEFT)
 
 # ============================================================
-# Slide 5: 问题分析 — 制造业统计
+# Slide 5: 问题分析 — 制造业统计（含数据流图）
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
 add_title_bar(slide, "二、问题分析 · 制造业增加值统计分析系统")
 add_bottom_bar(slide)
 
-add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.5),
-            "数据规模：96 个国家 × 21 年（1999–2019）× 4 个收入等级", size=20, bold=False, color=GRAY)
+add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.4),
+            "数据规模：96 个国家 × 21 年（1999–2019）× 4 个收入等级", size=18, color=GRAY)
 
-# 七个功能表
-add_textbox(slide, Inches(0.8), Inches(1.8), Inches(3.0), Inches(0.5),
-            "七项功能需求", size=24, bold=True, color=ACCENT)
-
+# 七项功能
 funcs = [
-    ("① 数据导入", "从 txt 批量读取 96 国数据到顺序表", "fscanf + strcmp 收入等级映射"),
-    ("② 查询", "输入国家名 + 年份 → 增加值 + 增速", "遍历顺序表、全字匹配"),
+    ("① 数据导入", "从 txt 批量读取 96 国数据到顺序表", "fscanf + strcmp 映射"),
+    ("② 查询", "国家名 + 年份 → 增加值 + 增速", "遍历顺序表、全字匹配"),
     ("③ 增速计算", "growth_rate = (当年−上年)/上年", "上年为 0 则增速 = 0"),
-    ("④ 增加值排名", "逐年全量 96 国按增加值降序排", "快速排序 O(n log n)"),
-    ("⑤ 增速排名", "先按收入等级分四组 → 组内降序排", "选择排序 O(n²)"),
-    ("⑥ 增加值分析", "对指定国家：min / max / 均值 / 方差", "样本方差 S²=Σ(Xi−X̄)²/(n−1)"),
-    ("⑦ 保存", "排好名的结果写到两个 txt 文件", "文件名由原始文件名派生"),
+    ("④ 增加值排名", "逐年全量按增加值降序排", "快速排序 O(n log n)"),
+    ("⑤ 增速排名", "按收入等级分四组 → 组内降序排", "选择排序 O(n²)"),
+    ("⑥ 增加值分析", "min / max / 均值 / 方差", "样本方差 n−1"),
+    ("⑦ 保存", "排名结果写到两个 txt", "文件名派生自原始文件名"),
 ]
 
 for i, (name, desc, note) in enumerate(funcs):
-    y = Inches(2.4) + Inches(0.68) * i
-    # 序号列
+    y = Inches(1.8) + Inches(0.52) * i
     add_textbox(slide, Inches(0.8), y, Inches(2.2), Inches(0.35),
-                name, size=15, bold=True, color=WHITE)
-    add_textbox(slide, Inches(3.1), y, Inches(5.5), Inches(0.35),
-                desc, size=14, color=GRAY)
-    add_textbox(slide, Inches(8.8), y, Inches(4.0), Inches(0.35),
-                note, size=13, color=GRAY)
+                name, size=14, bold=True, color=WHITE)
+    add_textbox(slide, Inches(3.1), y, Inches(5.3), Inches(0.35),
+                desc, size=13, color=GRAY)
+    add_textbox(slide, Inches(8.6), y, Inches(4.0), Inches(0.35),
+                note, size=12, color=GRAY)
+
+# 底部数据流
+flow_y = Inches(5.6)
+add_textbox(slide, Inches(0.8), Inches(5.2), Inches(5.0), Inches(0.35),
+            "数据流关系", size=18, bold=True, color=ACCENT)
+
+flow_steps = [
+    ("① 读", GREEN),
+    ("② 查", ACCENT),
+    ("③ 算", ACCENT),
+    ("④⑤ 排", QS_COLOR),
+    ("⑥ 析", YELLOW),
+    ("⑦ 存", ORANGE),
+]
+
+fw = Inches(1.5)
+fh = Inches(0.65)
+for i, (label, fc) in enumerate(flow_steps):
+    x = Inches(1.2) + Inches(2.0) * i
+    add_rect(slide, x, flow_y, fw, fh, fc, label, 15, WHITE if fc != YELLOW else BG_DARK, True)
+    if i < len(flow_steps) - 1:
+        add_arrow(slide, x + fw + Inches(0.05), flow_y + Inches(0.1),
+                  Inches(0.35), Inches(0.45), fc)
 
 # ============================================================
-# Slide 6: 索引数组原理（重点！）
+# Slide 6: 索引数组原理（重点！可视化改进）
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
 add_title_bar(slide, "二、核心难点 · 索引数组原理")
 add_bottom_bar(slide)
 
-add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.5),
+add_textbox(slide, Inches(0.8), Inches(1.3), Inches(11.0), Inches(0.4),
             "教材约束：排序不能改变原始记录的物理顺序，也不能新建一个排好序的记录序列",
-            size=18, bold=False, color=RED)
+            size=17, bold=False, color=RED)
 
-# 三个步骤的图示
-steps = [
-    ("初始状态", [
-        "r[]   = [ 中国, 美国, 印度, ..., 阿富汗 ]     ← 永远不动！",
-        "idx[] = [   1,    2,    3,  ...,    96    ]     ← 索引数组，初始 1..N",
-    ]),
-    ("比较时（间接访问）", [
-        "比较 r[idx[0]].value_added 和 r[idx[1]].value_added",
-        "即：  r[1] 的增加值  vs  r[2] 的增加值",
-        "比较的是原始数据，但只交换 idx 里的值！",
-    ]),
-    ("排序后", [
-        "idx[] = [ 8, 15, 3, ..., 72 ]     ← 已排好",
-        "r[idx[0]] = r[8] → 第 1 名     ← 通过索引间接访问",
-        "r[idx[1]] = r[15] → 第 2 名",
-        "原始记录 r[] 的物理顺序完全没有改变 ✓",
-    ]),
-]
+# --- 可视化：上下两行 ---
+# 顶部：数据行 r[]（锁定）
+ry = Inches(2.2)
+add_textbox(slide, Inches(0.8), ry - Inches(0.4), Inches(3.0), Inches(0.35),
+            "原始数据 r[]（绝对不动）", size=16, bold=True, color=WHITE)
 
-for i, (title, lines) in enumerate(steps):
-    x = Inches(1.0) + Inches(4.0) * i
-    box = add_rounded_box(slide, x, Inches(2.0), Inches(3.6), Inches(3.5),
-                          fill_color=TABLE_H)
-    add_textbox(slide, x + Inches(0.2), Inches(2.1), Inches(3.2), Inches(0.4),
-                title, size=20, bold=True, color=YELLOW)
-    add_multiline(slide, x + Inches(0.2), Inches(2.6), Inches(3.2), Inches(2.5),
-                  lines, size=14, color=GRAY)
+data_colors = [TABLE_H, TABLE_H, TABLE_H, TABLE_H, TABLE_H]
+data_labels = ["中国 5000", "美国 8000", "印度 2000", "日本 4000", "德国 3000"]
+dw = Inches(2.0)
+dh = Inches(0.7)
+for i, (label, dc) in enumerate(zip(data_labels, data_colors)):
+    x = Inches(0.8) + Inches(2.1) * i
+    add_rect(slide, x, ry, dw, dh, dc, label, 16, WHITE)
+    add_rect(slide, x, ry + dh, dw, Inches(0.35),
+             RGBColor(0x15, 0x2A, 0x42), f"r[{i}]", 11, GRAY)
 
-# 底部总结
-add_textbox(slide, Inches(0.8), Inches(5.8), Inches(11.0), Inches(0.6),
-            "核心思想：排的是索引，不是记录本身。不改变原始顺序，通过索引间接表达排名——这是教材第6章\"内排序\"的核心技巧。",
-            size=18, bold=True, color=ACCENT)
+# 底部：索引行 idx[]
+iy = Inches(4.0)
+add_textbox(slide, Inches(0.8), iy - Inches(0.4), Inches(4.0), Inches(0.35),
+            "索引数组 idx[]（排序前 → 排序后）", size=16, bold=True, color=YELLOW)
+
+idx_labels_before = ["idx[0]=0", "idx[1]=1", "idx[2]=2", "idx[3]=3", "idx[4]=4"]
+idx_labels_after  = ["idx[0]=1", "idx[1]=0", "idx[2]=3", "idx[3]=4", "idx[4]=2"]
+idx_colors_after  = [GREEN, GREEN, GREEN, GREEN, GREEN]
+idx_colors_before = [GRAY, GRAY, GRAY, GRAY, GRAY]
+
+for i in range(5):
+    x = Inches(0.8) + Inches(2.1) * i
+    # 排序前
+    add_rect(slide, x, iy, dw, dh * 0.5, TABLE_H, idx_labels_before[i], 12, GRAY)
+    # 排序后
+    add_rect(slide, x, iy + dh * 0.55, dw, dh * 0.5, GREEN, idx_labels_after[i], 14, WHITE, True)
+
+# 映射箭头说明
+add_rect(slide, Inches(0.8), Inches(5.3), Inches(11.3), Inches(1.4), TABLE_H)
+add_multiline(slide, Inches(1.2), Inches(5.4), Inches(10.5), Inches(1.2), [
+    ("排序后如何读取排名：", True, 17, WHITE),
+    ("r[idx[0]] = r[1] = 美国 8000 → 第 1 名    |    r[idx[1]] = r[0] = 中国 5000 → 第 2 名", False, 15, GRAY),
+    ("r[idx[2]] = r[3] = 日本 4000 → 第 3 名    |    r[idx[3]] = r[4] = 德国 3000 → 第 4 名", False, 15, GRAY),
+    ("只交换 idx[] 中的整数下标，r[] 的物理顺序从未改变 ✓", True, 15, ACCENT),
+])
 
 # ============================================================
-# Slide 7: 存储结构 — 小猫钓鱼
+# Slide 7: 存储结构 — 小猫钓鱼（字号加大）
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
@@ -364,8 +426,8 @@ code_q = """typedef struct QNode {
 } QNode;
 
 typedef struct {
-    QNode *front;   // 队头→出牌
-    QNode *rear;    // 队尾→收牌入队
+    QNode *front;   // 队头
+    QNode *rear;    // 队尾
 } LinkQueue;
 
 void queue_init(LinkQueue *q);
@@ -377,7 +439,7 @@ tf = txBox.text_frame
 tf.word_wrap = True
 p = tf.paragraphs[0]
 p.text = code_q
-p.font.size = Pt(13)
+p.font.size = Pt(15)
 p.font.color.rgb = GREEN
 p.font.name = "Courier New"
 
@@ -390,7 +452,7 @@ code_s = """typedef struct SNode {
 } SNode;
 
 typedef struct {
-    SNode *top;     // 栈顶→放牌/收牌
+    SNode *top;     // 栈顶
 } LinkStack;
 
 void stack_init(LinkStack *s);
@@ -402,59 +464,57 @@ tf = txBox.text_frame
 tf.word_wrap = True
 p = tf.paragraphs[0]
 p.text = code_s
-p.font.size = Pt(13)
+p.font.size = Pt(15)
 p.font.color.rgb = GREEN
 p.font.name = "Courier New"
 
-# 底部：为什么不选数组
+# 底部
 add_rounded_box(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(1.3),
                 fill_color=TABLE_H)
 add_textbox(slide, Inches(1.2), Inches(5.4), Inches(11.0), Inches(0.4),
             "选型理由", size=18, bold=True, color=ACCENT)
 add_multiline(slide, Inches(1.2), Inches(5.8), Inches(11.0), Inches(0.8), [
-    ("数组队列 → 假溢出问题（出队后 front 前空间浪费）；链式队列 → 动态分配，无容量上限，不受游戏时长影响", False, 15, GRAY),
-    ("数组栈   → 需预设最大容量（游戏理论最长对局不确定）；链式栈   → 按需分配，桌面牌数动态增长收缩", False, 15, GRAY),
+    ("数组队列 → 假溢出；链式队列 → 动态分配，无容量上限", False, 15, GRAY),
+    ("数组栈   → 需预设容量；链式栈   → 按需分配，桌面牌数动态增减", False, 15, GRAY),
 ])
 
 # ============================================================
-# Slide 8: 存储结构 — 制造业
+# Slide 8: 存储结构 — 制造业（字号加大）
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
 add_title_bar(slide, "三、存储结构及接口设计 · 制造业统计")
 add_bottom_bar(slide)
 
-# 顺序表结构
 add_textbox(slide, Inches(0.8), Inches(1.3), Inches(6.0), Inches(0.5),
             "顺序表 + 索引数组", size=22, bold=True, color=YELLOW)
 
 code_rec = """typedef struct {
-    char  country[30];          // 国家名
-    int   country_type;         // 0=低 1=中低 2=中高 3=高
-    float value_added[21];      // 增加值（亿美元）
-    float growth_rate[21];      // 同比增速
-    int   year[21];             // 年份 1999-2019
-    int   index_va[21];         // 增加值排名（逐年）
-    int   index_gr[21];         // 增速排名（逐年、组内）
+    char  country[30];
+    int   country_type;    // 0=低 1=中低等 2=中高等 3=高
+    float value_added[21];
+    float growth_rate[21];
+    int   year[21];
+    int   index_va[21];    // 增加值排名
+    int   index_gr[21];    // 增速排名（组内）
 } RecType;
 
 typedef struct {
-    RecType r[MAXSIZE+1];       // r[0]不用
-    int index_l[], index_ml[],  // 四组收入等级索引
+    RecType r[MAXSIZE];    // r[0] 为第一个国家
+    int index_l[], index_ml[],
         index_mh[], index_h[];
     int length;
 } SqList;"""
 
-txBox = slide.shapes.add_textbox(Inches(0.8), Inches(1.8), Inches(6.5), Inches(4.5))
+txBox = slide.shapes.add_textbox(Inches(0.8), Inches(1.8), Inches(6.5), Inches(4.0))
 tf = txBox.text_frame
 tf.word_wrap = True
 p = tf.paragraphs[0]
 p.text = code_rec
-p.font.size = Pt(12.5)
+p.font.size = Pt(14)
 p.font.color.rgb = GREEN
 p.font.name = "Courier New"
 
-# 右侧：七项接口
 add_textbox(slide, Inches(7.8), Inches(1.3), Inches(5.0), Inches(0.5),
             "核心算法接口", size=22, bold=True, color=YELLOW)
 
@@ -481,7 +541,7 @@ for i, (api, note) in enumerate(apis):
                     note, size=11, bold=True, color=YELLOW)
 
 # ============================================================
-# Slide 9: 两种排序算法对比
+# Slide 9: 两种排序算法对比（色块区分）
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
@@ -495,10 +555,10 @@ col_x = [Inches(0.8)]
 for i in range(1, 3):
     col_x.append(col_x[-1] + col_w[i-1] + Inches(0.1))
 
-# Draw header
-for i, (hdr, w, x) in enumerate(zip(headers, col_w, col_x)):
-    box = add_rounded_box(slide, x, Inches(1.5), w, Inches(0.55),
-                          fill_color=RGBColor(0x15, 0x2A, 0x42))
+# 表头底色
+hdr_colors = [RGBColor(0x15, 0x2A, 0x42), RGBColor(0x15, 0x3A, 0x62), RGBColor(0x52, 0x2A, 0x12)]
+for i, (hdr, w, x, hc) in enumerate(zip(headers, col_w, col_x, hdr_colors)):
+    add_rounded_box(slide, x, Inches(1.5), w, Inches(0.55), fill_color=hc)
     add_textbox(slide, x, Inches(1.52), w, Inches(0.5),
                 hdr, size=18, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 
@@ -509,23 +569,33 @@ rows = [
     ("排序范围", "全局 96 国，逐年全量排", "分四组，各组内逐年排"),
     ("是否分组", "否（全量排名）", "是（先按收入等级分四组）"),
     ("稳定性", "不稳定", "不稳定"),
-    ("选型理由", "数据量适中，平均效率最优", "分组后每组仅 10-50 国，\nO(n²) 差别不大，实现简洁直观"),
+    ("选型理由", "数据量适中，平均效率最优", "分组后每组仅 10-50 国，O(n²) 差别不大"),
     ("结果存储", "index_va[year]", "index_gr[year]（组内排名）"),
 ]
+
+QS_ROW = RGBColor(0x1A, 0x3A, 0x5A)   # 快排列蓝底
+SS_ROW = RGBColor(0x5A, 0x3A, 0x1A)   # 选择排序列橙底
 
 for r, row in enumerate(rows):
     y = Inches(2.15) + Inches(0.58) * r
     bg = TABLE_H if r % 2 == 0 else BG_DARK
     for c in range(3):
-        box = add_rounded_box(slide, col_x[c], y, col_w[c], Inches(0.52), fill_color=bg)
+        # 数据列加色块
+        col_bg = bg
+        if c == 1:
+            col_bg = TABLE_H if r % 2 == 0 else RGBColor(0x22, 0x32, 0x4A)
+        elif c == 2:
+            col_bg = TABLE_H if r % 2 == 0 else RGBColor(0x3A, 0x2A, 0x22)
+        add_rounded_box(slide, col_x[c], y, col_w[c], Inches(0.52), fill_color=col_bg)
         add_textbox(slide, col_x[c] + Inches(0.15), y + Inches(0.02),
                     col_w[c] - Inches(0.2), Inches(0.48),
                     row[c], size=14, bold=(c == 0),
                     color=WHITE if c == 0 else GRAY,
                     align=PP_ALIGN.CENTER if c > 0 else PP_ALIGN.LEFT)
 
+# 底部说明
 add_textbox(slide, Inches(0.8), Inches(6.9), Inches(12.0), Inches(0.4),
-            "教材要求 ④ 和 ⑤ 必须使用不同排序算法——体现了对多种排序算法的掌握",
+            "教材要求 ④ 和 ⑤ 必须使用不同排序算法 — 体现了对多种排序算法的掌握",
             size=16, bold=True, color=ACCENT)
 
 # ============================================================
@@ -536,7 +606,6 @@ set_bg(slide)
 add_title_bar(slide, "四、可行性分析")
 add_bottom_bar(slide)
 
-# 三列
 feasibility = [
     ("技术可行性", GREEN, [
         "已掌握全部所需数据结构：",
@@ -547,14 +616,6 @@ feasibility = [
         "O(n²)也毫秒级，无性能瓶颈",
         "参考代码可作验证基准",
     ]),
-    ("时间可行性", YELLOW, [
-        "5/14 确定思路 → 5/19 开题",
-        "5/21–6/8 程序设计实现（≈3周）",
-        "小猫钓鱼游戏 已完成编码调试",
-        "制造业系统 七项功能已完成",
-        "剩余：代码复核、测试、报告",
-        "时间充裕 ✓",
-    ]),
     ("风险与应对", RED, [
         "索引数组易出错",
         "→ 参考教材索引实现，逐步验证",
@@ -562,18 +623,17 @@ feasibility = [
         "两种排序可能误用",
         "→ 独立函数封装，不同入口",
         "",
-        "文件路径问题（src/ vs 根目录）",
-        "→ 已做 fallback，两级均可读取",
+        "文件路径问题",
+        "→ 数据文件和 main.c 同目录",
     ]),
 ]
 
 for i, (title, accent, items) in enumerate(feasibility):
-    x = Inches(0.8) + Inches(4.2) * i
-    box = add_rounded_box(slide, x, Inches(1.4), Inches(3.8), Inches(5.2),
-                          fill_color=TABLE_H)
-    add_textbox(slide, x + Inches(0.2), Inches(1.5), Inches(3.4), Inches(0.5),
+    x = Inches(1.5) + Inches(6.0) * i
+    add_rounded_box(slide, x, Inches(1.4), Inches(5.0), Inches(5.2), fill_color=TABLE_H)
+    add_textbox(slide, x + Inches(0.2), Inches(1.5), Inches(4.4), Inches(0.5),
                 title, size=22, bold=True, color=accent)
-    add_multiline(slide, x + Inches(0.2), Inches(2.1), Inches(3.4), Inches(4.0),
+    add_multiline(slide, x + Inches(0.2), Inches(2.1), Inches(4.4), Inches(4.0),
                   items, size=15, color=GRAY)
 
 # ============================================================
@@ -581,10 +641,9 @@ for i, (title, accent, items) in enumerate(feasibility):
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_bg(slide)
-add_title_bar(slide, "五、人员分工与进度安排")
+add_title_bar(slide, "五、人员分工")
 add_bottom_bar(slide)
 
-# 分工表
 add_textbox(slide, Inches(0.8), Inches(1.3), Inches(5.5), Inches(0.5),
             "人员分工", size=22, bold=True, color=ACCENT)
 
@@ -594,11 +653,10 @@ div_rows = [
 ]
 div_w = [Inches(2.0), Inches(9.5)]
 
-# header
 for c, (hdr, w) in enumerate(zip(div_headers, div_w)):
     x = Inches(0.8) + sum(div_w[:c])
-    box = add_rounded_box(slide, x, Inches(1.8), w, Inches(0.5),
-                          fill_color=RGBColor(0x15, 0x2A, 0x42))
+    add_rounded_box(slide, x, Inches(1.8), w, Inches(0.5),
+                    fill_color=RGBColor(0x15, 0x2A, 0x42))
     add_textbox(slide, x, Inches(1.82), w, Inches(0.5),
                 hdr, size=16, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 
@@ -607,8 +665,7 @@ for r, row in enumerate(div_rows):
     for c, (cell, w) in enumerate(zip(row, div_w)):
         x = Inches(0.8) + sum(div_w[:c])
         bg = TABLE_H if r % 2 == 0 else BG_DARK
-        box = add_rounded_box(slide, x, y, w, Inches(1.0), fill_color=bg)
-        # Multi-line cells need special handling
+        add_rounded_box(slide, x, y, w, Inches(1.0), fill_color=bg)
         lines = cell.split("\n")
         for li, line in enumerate(lines):
             add_textbox(slide, x + Inches(0.15), y + Inches(0.05 + 0.3 * li),
@@ -616,30 +673,7 @@ for r, row in enumerate(div_rows):
                         line, size=14, color=GRAY if li > 0 else WHITE,
                         bold=(li == 0))
 
-# 进度时间线
-add_textbox(slide, Inches(0.8), Inches(4.0), Inches(5.5), Inches(0.5),
-            "进度安排", size=22, bold=True, color=ACCENT)
 
-timeline = [
-    ("5/14", "确定思路、完成答辩 PPT", YELLOW),
-    ("5/19", "开题答辩", RED),
-    ("5/21 起", "算法设计 → 程序实现", ACCENT),
-    ("6/9", "程序演示与答辩", GREEN),
-    ("6/11", "报告撰写", GRAY),
-]
-
-for i, (date, event, color) in enumerate(timeline):
-    y = Inches(4.5) + Inches(0.55) * i
-    add_textbox(slide, Inches(1.0), y, Inches(1.5), Inches(0.4),
-                date, size=16, bold=True, color=color)
-    add_textbox(slide, Inches(2.8), y, Inches(8.0), Inches(0.4),
-                event, size=16, color=GRAY)
-    # dot
-    dot = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(2.3), y + Inches(0.07),
-                                 Pt(14), Pt(14))
-    dot.fill.solid()
-    dot.fill.fore_color.rgb = color
-    dot.line.fill.background()
 
 # ============================================================
 # Slide 12: 预期结果
@@ -650,21 +684,20 @@ add_title_bar(slide, "六、预期结果")
 add_bottom_bar(slide)
 
 results = [
-    ("🎮 小猫钓鱼游戏",
+    ("小猫钓鱼游戏",
      "终端交互程序，支持随机洗牌发牌、二人交替出牌、\n自动判定收牌和胜负、回合上限保护。"),
-    ("📊 制造业统计分析系统",
+    ("制造业统计分析系统",
      "菜单驱动的终端程序，完整实现七项功能：\n导入 → 查询 → 增速计算 → 两种排名 → 分析 → 保存。"),
-    ("📄 输出文件",
-     "• 制造业分析_inputdate_Sorted.txt（逐年全量增加值排名）\n"
-     "• 制造业分析_inputdate_Grouped_Sorted.txt（逐年分组增速排名）"),
-    ("📝 实验报告",
+    ("输出文件",
+     "制造业分析_inputdate_Sorted.txt（逐年全量增加值排名）\n"
+     "制造业分析_inputdate_Grouped_Sorted.txt（逐年分组增速排名）"),
+    ("实验报告",
      "含需求分析、概要设计、详细设计、\n测试用例与分析、源代码、运行截图、心得总结。"),
 ]
 
 for i, (title, desc) in enumerate(results):
     y = Inches(1.5) + Inches(1.4) * i
-    box = add_rounded_box(slide, Inches(1.0), y, Inches(11.3), Inches(1.2),
-                          fill_color=TABLE_H)
+    add_rounded_box(slide, Inches(1.0), y, Inches(11.3), Inches(1.2), fill_color=TABLE_H)
     add_textbox(slide, Inches(1.3), y + Inches(0.1), Inches(4.0), Inches(0.5),
                 title, size=22, bold=True, color=ACCENT)
     add_multiline(slide, Inches(1.3), y + Inches(0.55), Inches(10.5), Inches(0.7),
