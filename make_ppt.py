@@ -198,13 +198,13 @@ toc_items = [
 ]
 
 for i, (num, title, desc) in enumerate(toc_items):
-    y = Inches(1.2) + Inches(0.72) * i
-    add_textbox(slide, Inches(1.2), y, Inches(0.8), Inches(0.55),
-                num, size=28, bold=True, color=ACCENT)
-    add_textbox(slide, Inches(2.2), y + Inches(0.02), Inches(3.0), Inches(0.4),
-                title, size=22, bold=True, color=WHITE)
-    add_textbox(slide, Inches(2.2), y + Inches(0.38), Inches(8.0), Inches(0.35),
-                desc, size=14, color=GRAY)
+    y = Inches(1.2) + Inches(0.68) * i
+    add_textbox(slide, Inches(1.2), y, Inches(0.8), Inches(0.5),
+                num, size=26, bold=True, color=ACCENT)
+    add_textbox(slide, Inches(2.2), y + Inches(0.02), Inches(3.0), Inches(0.35),
+                title, size=21, bold=True, color=WHITE)
+    add_textbox(slide, Inches(2.2), y + Inches(0.40), Inches(8.0), Inches(0.3),
+                desc, size=13, color=GRAY)
 
 # ============================================================
 # Slide 3: 选题的意义
@@ -504,6 +504,8 @@ typedef struct {
     int index_l[], index_ml[],
         index_mh[], index_h[];
     int length;
+    int count_l, count_ml, count_mh, count_h;
+    int growth_done;
 } SqList;"""
 
 txBox = slide.shapes.add_textbox(Inches(0.8), Inches(1.8), Inches(6.5), Inches(4.0))
