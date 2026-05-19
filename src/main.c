@@ -476,7 +476,6 @@ void MVA_SqList_Sort_Gr(SqList *L) {
  * 方差使用样本方差公式: S² = Σ(Xi - X̄)² / (n-1) */
 
 void MVA_SqList_Analyze(SqList *L) {
-    if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
     char name[30];
     printf("请输入要分析的国家名：");
     scanf("%s", name);
@@ -489,46 +488,47 @@ void MVA_SqList_Analyze(SqList *L) {
 
     RecType *rec = &L->r[i];
 
-    /* 遍历 21 年数据，求增加值的 min/max/和/平方和 */
+    /* 增加值分析 */
     float min_va = rec->value_added[0], max_va = rec->value_added[0];
     float sum_va = 0, sum_sq_va = 0;
-    float min_gr = rec->growth_rate[0], max_gr = rec->growth_rate[0];
-    float sum_gr = 0, sum_sq_gr = 0;
-
     for (int k = 0; k < YEARS; k++) {
         float v = rec->value_added[k];
         if (v < min_va) min_va = v;
         if (v > max_va) max_va = v;
         sum_va += v;
+    }
+    float avg_va = sum_va / YEARS;
+    for (int k = 0; k < YEARS; k++)
+        sum_sq_va += (rec->value_added[k] - avg_va) * (rec->value_added[k] - avg_va);
+    float var_va = sum_sq_va / (YEARS - 1);
 
+    printf("\n%s 1999-2019 年制造业统计分析：\n", name);
+    printf("  增加值 — 最小值: %.2f, 最大值: %.2f, 均值: %.2f, 方差: %.2f\n",
+           min_va, max_va, avg_va, var_va);
+
+    if (var_va > 1e6)
+        printf("  → 该国制造业增加值波动很大，发展不稳定。\n");
+    else if (var_va < 1e3)
+        printf("  → 该国制造业增加值波动较小，发展较平稳。\n");
+
+    /* 增速分析（需先执行增速计算） */
+    if (!L->growth_done) return;
+
+    float min_gr = rec->growth_rate[0], max_gr = rec->growth_rate[0];
+    float sum_gr = 0, sum_sq_gr = 0;
+    for (int k = 0; k < YEARS; k++) {
         float g = rec->growth_rate[k];
         if (g < min_gr) min_gr = g;
         if (g > max_gr) max_gr = g;
         sum_gr += g;
     }
-
-    float avg_va = sum_va / YEARS;
     float avg_gr = sum_gr / YEARS;
-
-    /* 计算方差 */
-    for (int k = 0; k < YEARS; k++) {
-        sum_sq_va += (rec->value_added[k] - avg_va) * (rec->value_added[k] - avg_va);
+    for (int k = 0; k < YEARS; k++)
         sum_sq_gr += (rec->growth_rate[k] - avg_gr) * (rec->growth_rate[k] - avg_gr);
-    }
-    float var_va = sum_sq_va / (YEARS - 1);  /* 样本方差 */
     float var_gr = sum_sq_gr / (YEARS - 1);
 
-    printf("\n%s 1999-2019 年制造业统计分析：\n", name);
-    printf("  增加值 — 最小值: %.2f, 最大值: %.2f, 均值: %.2f, 方差: %.2f\n",
-           min_va, max_va, avg_va, var_va);
     printf("  增速   — 最小值: %.2f%%, 最大值: %.2f%%, 均值: %.2f%%, 方差: %.6f\n",
            min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
-
-    /* 方差解读 */
-    if (var_va > 1e6)
-        printf("  → 该国制造业增加值波动很大，发展不稳定。\n");
-    else if (var_va < 1e3)
-        printf("  → 该国制造业增加值波动较小，发展较平稳。\n");
 }
 
 /* ==================== ⑦ 保存排名结果 ==================== */
