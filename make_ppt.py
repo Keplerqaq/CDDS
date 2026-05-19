@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""生成开题答辩 PPT —— 第3组：小猫钓鱼 + 制造业统计分析"""
+"""生成开题答辩 PPT：小猫钓鱼 + 制造业统计分析"""
 
 from pptx import Presentation
 from pptx.util import Inches, Pt
@@ -136,7 +136,7 @@ def add_rect(slide, left, top, width, height, fill_color, text="",
     return shape
 
 
-def add_bottom_bar(slide, text="数据结构课程设计 · 第3组 · 开题答辩"):
+def add_bottom_bar(slide, text="数据结构课程设计 · 开题答辩"):
     shape = slide.shapes.add_shape(
         MSO_SHAPE.RECTANGLE, Inches(0), H - Inches(0.4), W, Inches(0.4))
     shape.fill.solid()
@@ -171,7 +171,6 @@ add_textbox(slide, Inches(2), Inches(2.5), Inches(9.333), Inches(1.0),
             size=30, bold=False, color=ACCENT, align=PP_ALIGN.CENTER)
 
 add_multiline(slide, Inches(2), Inches(3.6), Inches(9.333), Inches(2.0), [
-    ("第 3 组", False, 22, GRAY),
     ("2026 年 5 月 20 日", False, 18, GRAY),
 ], align=PP_ALIGN.CENTER)
 
