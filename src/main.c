@@ -227,8 +227,6 @@ void fish_game(void) {
 #define MAXSIZE 96
 #define YEARS   21          /* 1999-2019 */
 
-int k1 = 0, k2 = 0, k3 = 0, k4 = 0;  /* 四个收入等级的国家数 */
-
 typedef struct {
     char  country[30];               /* 国家名 */
     int   country_type;              /* 0=低收入 1=中低等收入 2=中高等收入 3=高收入 */
@@ -249,6 +247,7 @@ typedef struct {
     int     index_mh[MAXSIZE];   /* 中高等收入 */
     int     index_h[MAXSIZE];    /* 高收入 */
     int     length;
+    int     count_l, count_ml, count_mh, count_h;  /* 各组国家数 */
 } SqList;
 
 /* ==================== 快速排序（用于增加值排名） ====================
@@ -398,11 +397,7 @@ void MVA_SqList_Sort_Va(SqList *L) {
  * 先按收入等级分四组 → 各组逐年按增速降序排 → 结果存入 index_gr。
  * 使用选择排序 —— 与④使用的快速排序不同。
  *
- * 收入等级分组逻辑：
- *   index_l[k1]  = 低收入国家在 r[] 中的下标
- *   index_ml[k2] = 中低等收入国家在 r[] 中的下标
- *   index_mh[k3] = 中高等收入国家在 r[] 中的下标
- *   index_h[k4]  = 高收入国家在 r[] 中的下标 */
+ * 收入等级分组逻辑：四组下标分别存入 index_l/mh/mh/h，计数存入 count_l/ml/mh/h */
 
 void group_sort_select(SqList *L, int *group, int group_size,
                        int *result_idx, int year) {
@@ -429,13 +424,13 @@ void MVA_SqList_Sort_Gr(SqList *L) {
     int temp_rank[MAXSIZE];
 
     /* ① 将各国按收入等级分组 */
-    k1 = k2 = k3 = k4 = 0;
+    L->count_l = L->count_ml = L->count_mh = L->count_h = 0;
     for (int i = 0; i < L->length; i++) {
         switch (L->r[i].country_type) {
-            case 0: L->index_l[k1++] = i; break;
-            case 1: L->index_ml[k2++] = i; break;
-            case 2: L->index_mh[k3++] = i; break;
-            case 3: L->index_h[k4++] = i; break;
+            case 0: L->index_l[L->count_l++] = i; break;
+            case 1: L->index_ml[L->count_ml++] = i; break;
+            case 2: L->index_mh[L->count_mh++] = i; break;
+            case 3: L->index_h[L->count_h++] = i; break;
         }
     }
 
@@ -446,7 +441,7 @@ void MVA_SqList_Sort_Gr(SqList *L) {
 
     char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
     int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
-    int   sizes[]      = {k1, k2, k3, k4};
+    int   sizes[]      = {L->count_l, L->count_ml, L->count_mh, L->count_h};
 
     /* ③ 逐年分组排序并输出 */
     for (int year = 0; year < YEARS; year++) {
@@ -579,7 +574,7 @@ void MVA_SqList_Save(SqList *L, const char *src_name) {
 
     char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
     int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
-    int   sizes[]      = {k1, k2, k3, k4};
+    int   sizes[]      = {L->count_l, L->count_ml, L->count_mh, L->count_h};
 
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
