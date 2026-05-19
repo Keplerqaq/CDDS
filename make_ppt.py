@@ -265,42 +265,30 @@ add_multiline(slide, Inches(0.8), Inches(1.9), Inches(5.2), Inches(4.5), [
 ])
 
 # 右侧：流程图
-fx = Inches(6.0)
-fy = Inches(1.4)
-bw = Inches(2.5)
-bh = Inches(0.8)
-gap = Inches(0.15)
+fx = Inches(7.0)
+fy = Inches(1.5)
+bw = Inches(2.3)
+bh = Inches(0.75)
+gap = Inches(0.2)
 
 # 出牌
-add_rect(slide, fx + Inches(1.2), fy, bw, bh, TABLE_H, "出一张牌", 16, WHITE, True)
-# 判重（菱形用矩形代替）
-add_rect(slide, fx + Inches(1.2), fy + bh + gap, bw, bh,
+add_rect(slide, fx, fy, bw, bh, TABLE_H, "出一张牌", 16, WHITE, True)
+# 向下箭头
+add_textbox(slide, fx, fy + bh, bw, Inches(0.35),
+            "↓", size=18, bold=True, color=ACCENT, align=PP_ALIGN.CENTER)
+# 判重
+add_rect(slide, fx, fy + bh + gap * 2, bw, bh,
          ACCENT, "桌上有此牌？", 15, WHITE, True)
-
-# 无匹配 → 压栈
-add_arrow(slide, fx + Inches(3.4), fy + bh + gap, Inches(0.5), bh, GREEN)
-add_rect(slide, fx + Inches(3.9), fy + bh + gap, Inches(1.8), bh,
+# 向右箭头 + 否
+add_textbox(slide, fx + bw, fy + bh + gap * 2, Inches(0.8), bh,
+            "否 →", size=15, bold=True, color=GREEN, align=PP_ALIGN.LEFT)
+add_rect(slide, fx + bw + Inches(0.8), fy + bh + gap * 2, Inches(1.8), bh,
          RGBColor(0x2E, 0x7D, 0x32), "压栈 + 标记", 14, WHITE)
-
-# 有匹配 → 收牌
-add_arrow(slide, fx + Inches(1.2), fy + bh * 2 + gap * 2, Inches(0.0), Inches(0.01), GRAY)
-add_rect(slide, fx + Inches(1.2), fy + bh * 3 + gap * 2, bw, bh * 1.3,
+# 向下箭头 + 是
+add_textbox(slide, fx, fy + bh * 2 + gap * 3, bw, Inches(0.35),
+            "是 ↓", size=18, bold=True, color=RED, align=PP_ALIGN.CENTER)
+add_rect(slide, fx, fy + bh * 2 + gap * 4, bw, bh * 1.2,
          RGBColor(0xC6, 0x28, 0x28), "收牌入队尾\n(栈顶出到匹配)", 13, WHITE)
-
-# 判胜负
-add_rect(slide, fx + Inches(1.2), fy + bh * 4.5 + gap * 3, bw, bh,
-         TABLE_H, "手牌为空？", 15, WHITE, True)
-add_arrow(slide, fx + Inches(3.4), fy + bh * 4.5 + gap * 3, Inches(0.5), bh, YELLOW)
-add_rect(slide, fx + Inches(3.9), fy + bh * 4.5 + gap * 3, Inches(1.8), bh,
-         YELLOW, "对手获胜", 14, BG_DARK, True)
-
-# 连接箭头
-add_textbox(slide, fx + Inches(1.2), fy + bh * 2.2, Inches(2.5), Inches(0.3),
-            "是 ↓", size=13, bold=True, color=RED, align=PP_ALIGN.CENTER)
-add_textbox(slide, fx + Inches(1.2), fy + bh * 4.2, Inches(2.5), Inches(0.3),
-            "否 ↓", size=13, bold=True, color=GRAY, align=PP_ALIGN.CENTER)
-add_textbox(slide, fx + Inches(2.5), fy + bh + Inches(0.2), Inches(1.0), Inches(0.3),
-            "否 →", size=13, bold=True, color=GREEN, align=PP_ALIGN.LEFT)
 
 # ============================================================
 # Slide 7: 存储结构 — 小猫钓鱼（字号加大）
