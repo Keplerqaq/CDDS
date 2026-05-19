@@ -252,7 +252,7 @@ add_bottom_bar(slide)
 # 题干
 add_rounded_box(slide, Inches(0.6), Inches(1.3), Inches(12.1), Inches(1.4), fill_color=TABLE_H)
 add_multiline(slide, Inches(0.9), Inches(1.4), Inches(11.5), Inches(1.2), [
-    ("题干：将一副扑克牌（牌面1-9）平分两份，甲乙交替出牌。若打出的牌与桌上某张相同，", False, 13, GRAY),
+    ("将一副扑克牌（牌面1-9）平分两份，甲乙交替出牌。若打出的牌与桌上某张相同，", False, 13, GRAY),
     ("      则两张相同牌及中间所夹的牌全部取走并放入手牌末尾。一方手牌出完则对手获胜。", False, 13, GRAY),
     ("      要求：模拟游戏过程，判断胜者，打印获胜方手牌及桌面剩余牌。", False, 13, GRAY),
 ], spacing=0.8)
@@ -387,7 +387,7 @@ add_bottom_bar(slide)
 # 题干
 add_rounded_box(slide, Inches(0.6), Inches(1.3), Inches(12.1), Inches(0.8), fill_color=TABLE_H)
 add_multiline(slide, Inches(0.9), Inches(1.35), Inches(11.5), Inches(0.7), [
-    ("题干：根据1999~2019年世界各国制造业增加值数据，编程实现统计分析系统，包括数据导入、查询、", False, 13, GRAY),
+    ("根据1999~2019年世界各国制造业增加值数据，编程实现统计分析系统，包括数据导入、查询、", False, 13, GRAY),
     ("      增速计算、增加值排名、增速排名、增加值分析、排名结果保存等功能。", False, 13, GRAY),
 ], spacing=0.8)
 
@@ -406,7 +406,7 @@ funcs = [
 ]
 
 for i, (name, desc, note) in enumerate(funcs):
-    y = Inches(2.7) + Inches(0.48) * i
+    y = Inches(2.65) + Inches(0.44) * i
     add_textbox(slide, Inches(0.8), y, Inches(2.2), Inches(0.35),
                 name, size=14, bold=True, color=WHITE)
     add_textbox(slide, Inches(3.1), y, Inches(5.3), Inches(0.35),
@@ -415,10 +415,6 @@ for i, (name, desc, note) in enumerate(funcs):
                 note, size=12, color=GRAY)
 
 # 底部数据流
-flow_y = Inches(6.1)
-add_textbox(slide, Inches(0.8), Inches(5.7), Inches(5.0), Inches(0.35),
-            "数据流关系", size=16, bold=True, color=ACCENT)
-
 flow_steps = [
     ("① 读", GREEN),
     ("② 查", ACCENT),
@@ -428,14 +424,15 @@ flow_steps = [
     ("⑦ 存", ORANGE),
 ]
 
+flow_y = Inches(5.7)
 fw = Inches(1.5)
-fh = Inches(0.65)
+fh = Inches(0.55)
 for i, (label, fc) in enumerate(flow_steps):
     x = Inches(1.2) + Inches(2.0) * i
-    add_rect(slide, x, flow_y, fw, fh, fc, label, 15, WHITE if fc != YELLOW else BG_DARK, True)
+    add_rect(slide, x, flow_y, fw, fh, fc, label, 14, WHITE if fc != YELLOW else BG_DARK, True)
     if i < len(flow_steps) - 1:
         add_arrow(slide, x + fw + Inches(0.05), flow_y + Inches(0.1),
-                  Inches(0.35), Inches(0.45), fc)
+                  Inches(0.3), Inches(0.35), fc)
 
 # ============================================================
 # Slide 6: 索引数组原理（重点！可视化改进）
