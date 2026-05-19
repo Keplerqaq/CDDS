@@ -367,8 +367,7 @@ add_rounded_box(slide, Inches(0.8), Inches(5.3), Inches(11.7), Inches(1.3),
 add_textbox(slide, Inches(1.2), Inches(5.4), Inches(11.0), Inches(0.4),
             "选型理由", size=18, bold=True, color=ACCENT)
 add_multiline(slide, Inches(1.2), Inches(5.8), Inches(11.0), Inches(0.8), [
-    ("数组队列 → 假溢出；链式队列 → 动态分配，无容量上限", False, 15, GRAY),
-    ("数组栈   → 需预设容量；链式栈   → 按需分配，桌面牌数动态增减", False, 15, GRAY),
+    ("链式队列 → 动态分配，无容量上限；链式栈 → 按需分配，桌面牌数动态增减", False, 15, GRAY),
 ])
 
 # ============================================================
