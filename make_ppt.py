@@ -189,7 +189,7 @@ toc_items = [
     ("2", "问题分析 · 小猫钓鱼", "游戏规则、数据结构映射、流程图"),
     ("3", "存储结构 · 小猫钓鱼", "链式队列/栈的接口与实现"),
     ("4", "问题分析 · 制造业统计", "数据规模、七项功能、索引数组原理"),
-    ("5", "存储结构 · 制造业统计", "顺序表+索引数组、两种排序对比"),
+    ("5", "存储结构 · 制造业统计", "顺序表+索引数组"),
     ("6", "可行性分析", "技术准备、风险应对"),
     ("7", "人员分工", "分工表"),
     ("8", "预期结果", "交付物"),
@@ -552,65 +552,6 @@ for i, (api, note) in enumerate(apis):
         add_textbox(slide, Inches(11.5), y, Inches(1.5), Inches(0.30),
                     note, size=11, bold=True, color=YELLOW)
 
-# ============================================================
-# Slide 9: 两种排序算法对比（色块区分）
-# ============================================================
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-set_bg(slide)
-add_title_bar(slide, "五、核心算法 · 两种排序方式对比")
-add_bottom_bar(slide)
-
-# 表头
-headers = ["", "增加值排名 ④", "增速排名 ⑤"]
-col_w = [Inches(2.5), Inches(4.8), Inches(4.8)]
-col_x = [Inches(0.8)]
-for i in range(1, 3):
-    col_x.append(col_x[-1] + col_w[i-1] + Inches(0.1))
-
-# 表头底色
-hdr_colors = [RGBColor(0x15, 0x2A, 0x42), RGBColor(0x15, 0x3A, 0x62), RGBColor(0x52, 0x2A, 0x12)]
-for i, (hdr, w, x, hc) in enumerate(zip(headers, col_w, col_x, hdr_colors)):
-    add_rounded_box(slide, x, Inches(1.5), w, Inches(0.55), fill_color=hc)
-    add_textbox(slide, x, Inches(1.52), w, Inches(0.5),
-                hdr, size=18, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-
-rows = [
-    ("排序算法", "快速排序", "选择排序"),
-    ("时间复杂度", "O(n log n) 平均 / O(n²) 最坏", "O(n²)"),
-    ("空间复杂度", "O(log n) 递归栈", "O(1) 原地"),
-    ("排序范围", "全局 96 国，逐年全量排", "分四组，各组内逐年排"),
-    ("是否分组", "否（全量排名）", "是（先按收入等级分四组）"),
-    ("稳定性", "不稳定", "不稳定"),
-    ("选型理由", "数据量适中，平均效率最优", "分组后每组仅 10-50 国，O(n²) 差别不大"),
-    ("结果存储", "index_va[year]", "index_gr[year]（组内排名）"),
-]
-
-QS_ROW = RGBColor(0x1A, 0x3A, 0x5A)   # 快排列蓝底
-SS_ROW = RGBColor(0x5A, 0x3A, 0x1A)   # 选择排序列橙底
-
-for r, row in enumerate(rows):
-    y = Inches(2.15) + Inches(0.58) * r
-    bg = TABLE_H if r % 2 == 0 else BG_DARK
-    for c in range(3):
-        # 数据列加色块
-        col_bg = bg
-        if c == 1:
-            col_bg = TABLE_H if r % 2 == 0 else RGBColor(0x22, 0x32, 0x4A)
-        elif c == 2:
-            col_bg = TABLE_H if r % 2 == 0 else RGBColor(0x3A, 0x2A, 0x22)
-        add_rounded_box(slide, col_x[c], y, col_w[c], Inches(0.52), fill_color=col_bg)
-        add_textbox(slide, col_x[c] + Inches(0.15), y + Inches(0.02),
-                    col_w[c] - Inches(0.2), Inches(0.48),
-                    row[c], size=14, bold=(c == 0),
-                    color=WHITE if c == 0 else GRAY,
-                    align=PP_ALIGN.CENTER if c > 0 else PP_ALIGN.LEFT)
-
-# 底部说明
-add_textbox(slide, Inches(0.8), Inches(6.9), Inches(12.0), Inches(0.4),
-            "教材要求 ④ 和 ⑤ 必须使用不同排序算法 — 体现了对多种排序算法的掌握",
-            size=16, bold=True, color=ACCENT)
-
-# ============================================================
 # Slide 10: 可行性分析
 # ============================================================
 slide = prs.slides.add_slide(prs.slide_layouts[6])
