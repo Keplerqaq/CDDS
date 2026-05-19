@@ -248,7 +248,6 @@ typedef struct {
     int     index_h[MAXSIZE];    /* 高收入 */
     int     length;
     int     count_l, count_ml, count_mh, count_h;  /* 各组国家数 */
-    int     growth_done;                             /* 增速是否已计算 */
 } SqList;
 
 /* ==================== 快速排序（用于增加值排名） ====================
@@ -307,7 +306,6 @@ void MVA_SqList_Read(SqList *L, const char *filename) {
     }
 
     L->length = n;
-    L->growth_done = 0;
     fclose(fp);
     printf("导入成功，共 %d 个国家。\n", L->length);
 }
@@ -361,7 +359,6 @@ void MVA_SqList_Calculate(SqList *L) {
                     (L->r[i].value_added[k] - prev) / prev;
         }
     }
-    L->growth_done = 1;
     printf("增速计算完成。\n");
 }
 
@@ -424,7 +421,6 @@ void group_sort_select(SqList *L, int *group, int group_size,
 }
 
 void MVA_SqList_Sort_Gr(SqList *L) {
-    if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
     int temp_rank[MAXSIZE];
 
     /* ① 将各国按收入等级分组 */
@@ -476,7 +472,6 @@ void MVA_SqList_Sort_Gr(SqList *L) {
  * 方差使用样本方差公式: S² = Σ(Xi - X̄)² / (n-1) */
 
 void MVA_SqList_Analyze(SqList *L) {
-    if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
     char name[30];
     printf("请输入要分析的国家名：");
     scanf("%s", name);
@@ -630,7 +625,6 @@ int MVA_Menu_Show(void) {
 void manufacturing_system(void) {
     SqList L;
     L.length = 0;
-    L.growth_done = 0;
     char filename[300] = "制造业分析_inputdate.txt";
     int  loaded = 0;
 
