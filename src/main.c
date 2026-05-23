@@ -6,11 +6,11 @@
 typedef struct QNode {
     int card;
     struct QNode *next;
-} QNode;
+} QNODE, *PQNODE;
 
 typedef struct {
-    QNode *front;
-    QNode *rear;
+    PQNODE front;
+    PQNODE rear;
 } LinkQueue;
 
 void queue_init(LinkQueue *q) {
@@ -22,7 +22,7 @@ int queue_is_empty(LinkQueue *q) {
 }
 
 void enqueue(LinkQueue *q, int card) {
-    QNode *node = (QNode *)malloc(sizeof(QNode));
+    PQNODE node = (PQNODE)malloc(sizeof(QNODE));
     node->card = card;
     node->next = NULL;
     if (queue_is_empty(q)) {
@@ -34,7 +34,7 @@ void enqueue(LinkQueue *q, int card) {
 }
 
 int dequeue(LinkQueue *q) {
-    QNode *tmp = q->front;
+    PQNODE tmp = q->front;
     int card = tmp->card;
     q->front = q->front->next;
     if (q->front == NULL) q->rear = NULL;
@@ -44,13 +44,13 @@ int dequeue(LinkQueue *q) {
 
 int queue_length(LinkQueue *q) {
     int len = 0;
-    QNode *p = q->front;
+    PQNODE p = q->front;
     while (p) { len++; p = p->next; }
     return len;
 }
 
 void queue_print(LinkQueue *q) {
-    QNode *p = q->front;
+    PQNODE p = q->front;
     if (!p) { printf("（空）"); return; }
     while (p) {
         printf("%d", p->card);
@@ -66,10 +66,10 @@ void queue_destroy(LinkQueue *q) {
 typedef struct SNode {
     int card;
     struct SNode *next;
-} SNode;
+} SNODE, *PSNODE;
 
 typedef struct {
-    SNode *top;
+    PSNODE top;
 } LinkStack;
 
 void stack_init(LinkStack *s) {
@@ -81,14 +81,14 @@ int stack_is_empty(LinkStack *s) {
 }
 
 void push(LinkStack *s, int card) {
-    SNode *node = (SNode *)malloc(sizeof(SNode));
+    PSNODE node = (PSNODE)malloc(sizeof(SNODE));
     node->card = card;
     node->next = s->top;
     s->top = node;
 }
 
 int pop(LinkStack *s) {
-    SNode *tmp = s->top;
+    PSNODE tmp = s->top;
     int card = tmp->card;
     s->top = s->top->next;
     free(tmp);
@@ -97,7 +97,7 @@ int pop(LinkStack *s) {
 
 void stack_print(LinkStack *s) {
     if (!s->top) { printf("（空）"); return; }
-    SNode *p = s->top;
+    PSNODE p = s->top;
     while (p) {
         printf("%d", p->card);
         p = p->next;
