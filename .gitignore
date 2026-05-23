@@ -15,6 +15,7 @@ src/reproduce.c
 
 # Generated files
 *.pptx
+*_Sorted.txt
 
 # Archive
 *.zip
