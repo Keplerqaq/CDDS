@@ -6,11 +6,11 @@
 typedef struct QNode {
     int card;
     struct QNode *next;
-} QNODE, *PQNODE;
+} QNode, *PQNode;
 
 typedef struct {
-    PQNODE front;
-    PQNODE rear;
+    PQNode front;
+    PQNode rear;
 } LinkQueue;
 
 void queue_init(LinkQueue *q) {
@@ -22,7 +22,7 @@ int queue_is_empty(LinkQueue *q) {
 }
 
 void enqueue(LinkQueue *q, int card) {
-    PQNODE node = (PQNODE)malloc(sizeof(QNODE));
+    PQNode node = (PQNode)malloc(sizeof(QNode));
     node->card = card;
     node->next = NULL;
     if (queue_is_empty(q)) {
@@ -34,7 +34,7 @@ void enqueue(LinkQueue *q, int card) {
 }
 
 int dequeue(LinkQueue *q) {
-    PQNODE tmp = q->front;
+    PQNode tmp = q->front;
     int card = tmp->card;
     q->front = q->front->next;
     if (q->front == NULL) q->rear = NULL;
@@ -44,13 +44,13 @@ int dequeue(LinkQueue *q) {
 
 int queue_length(LinkQueue *q) {
     int len = 0;
-    PQNODE p = q->front;
+    PQNode p = q->front;
     while (p) { len++; p = p->next; }
     return len;
 }
 
 void queue_print(LinkQueue *q) {
-    PQNODE p = q->front;
+    PQNode p = q->front;
     if (!p) { printf("（空）"); return; }
     while (p) {
         printf("%d", p->card);
@@ -66,10 +66,10 @@ void queue_destroy(LinkQueue *q) {
 typedef struct SNode {
     int card;
     struct SNode *next;
-} SNODE, *PSNODE;
+} SNode, *PSNode;
 
 typedef struct {
-    PSNODE top;
+    PSNode top;
 } LinkStack;
 
 void stack_init(LinkStack *s) {
@@ -81,14 +81,14 @@ int stack_is_empty(LinkStack *s) {
 }
 
 void push(LinkStack *s, int card) {
-    PSNODE node = (PSNODE)malloc(sizeof(SNODE));
+    PSNode node = (PSNode)malloc(sizeof(SNode));
     node->card = card;
     node->next = s->top;
     s->top = node;
 }
 
 int pop(LinkStack *s) {
-    PSNODE tmp = s->top;
+    PSNode tmp = s->top;
     int card = tmp->card;
     s->top = s->top->next;
     free(tmp);
@@ -97,7 +97,7 @@ int pop(LinkStack *s) {
 
 void stack_print(LinkStack *s) {
     if (!s->top) { printf("（空）"); return; }
-    PSNODE p = s->top;
+    PSNode p = s->top;
     while (p) {
         printf("%d", p->card);
         p = p->next;
