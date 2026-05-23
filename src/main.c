@@ -68,28 +68,36 @@ typedef struct SNode {
     struct SNode *next;
 } SNode;
 
-void push(SNode **stack, int card) {
-    SNode *node = (SNode *)malloc(sizeof(SNode));
-    node->card = card;
-    node->next = *stack;
-    *stack = node;
+typedef struct {
+    SNode *top;
+} LinkStack;
+
+void stack_init(LinkStack *s) {
+    s->top = NULL;
 }
 
-int pop(SNode **stack) {
-    SNode *tmp = *stack;
+int stack_is_empty(LinkStack *s) {
+    return s->top == NULL;
+}
+
+void push(LinkStack *s, int card) {
+    SNode *node = (SNode *)malloc(sizeof(SNode));
+    node->card = card;
+    node->next = s->top;
+    s->top = node;
+}
+
+int pop(LinkStack *s) {
+    SNode *tmp = s->top;
     int card = tmp->card;
-    *stack = (*stack)->next;
+    s->top = s->top->next;
     free(tmp);
     return card;
 }
 
-int stack_is_empty(SNode *stack) {
-    return stack == NULL;
-}
-
-void stack_print(SNode *stack) {
-    if (!stack) { printf("（空）"); return; }
-    SNode *p = stack;
+void stack_print(LinkStack *s) {
+    if (!s->top) { printf("（空）"); return; }
+    SNode *p = s->top;
     while (p) {
         printf("%d", p->card);
         p = p->next;
@@ -97,8 +105,8 @@ void stack_print(SNode *stack) {
     }
 }
 
-void stack_destroy(SNode **stack) {
-    while (!stack_is_empty(*stack)) pop(stack);
+void stack_destroy(LinkStack *s) {
+    while (!stack_is_empty(s)) pop(s);
 }
 
 void shuffle(int deck[], int n) {
@@ -119,7 +127,7 @@ void deal_cards(int deck[], int deck_size,
         enqueue(player_b, deck[i]);
 }
 
-int play_turn(LinkQueue *player, SNode **table,
+int play_turn(LinkQueue *player, LinkStack *table,
               int *flag, const char *who) {
     int card = dequeue(player);
     printf("  %s出 [%d] → ", who, card);
@@ -167,7 +175,8 @@ void fish_game(void) {
     queue_init(&player_b);
     deal_cards(deck, deck_size, &player_a, &player_b);
 
-    SNode *table = NULL;
+    LinkStack table;
+    stack_init(&table);
     int table_flag[10] = {0};
 
     printf("初始手牌：\n");
@@ -195,7 +204,7 @@ void fish_game(void) {
     printf("              游戏结束\n");
     printf("========================================\n");
     printf("桌面剩余牌（栈顶→栈底）: ");
-    stack_print(table);
+    stack_print(&table);
     printf("\n");
     if (!queue_is_empty(&player_a)) {
         printf("甲方手牌: "); queue_print(&player_a); printf("\n");
