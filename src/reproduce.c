@@ -6,8 +6,6 @@
 #define MAXSIZE 96
 #define YEARS 21
 
-void fish_game(void) {}
-
 void manufacturing_system(void) {}
 
 typedef struct QNode{
@@ -156,14 +154,14 @@ void deal_cards(int deck[], int deck_size, PLinkQueue player_a, PLinkQueue playe
 
 int play_turn(PLinkQueue player, PLinkStack table, int flag[], char who[]) {
     int card = dequeue(player);
-    printf("%s 出[%d]，", who, card);
+    printf("%s出%d，", who, card);
 
-    if(flag[card] == 1) {
-        printf("桌上已有 %d， 收牌", card);
+    if(flag[card - 1] == 1) {
+        printf("桌上已有 %d，收牌", card);
         enqueue(player, card);
         while(1) {
             int top = pop(table);
-            flag[top] = 0;
+            flag[top - 1] = 0;
             enqueue(player, top);
             if(top == card) {
                 break;
@@ -172,11 +170,72 @@ int play_turn(PLinkQueue player, PLinkStack table, int flag[], char who[]) {
     } else {
         printf("无匹配，留在桌面");
         push(table, card);
-        flag[card] = 1;
+        flag[card - 1] = 1;
     }
 
     printf("\n");
     return queue_is_empty(player);  //每出一次牌都要判空
+}
+
+void fish_game(void) {
+    printf("========================================\n");
+    printf("            小猫钓鱼游戏\n");
+    printf("========================================\n\n");
+    srand((unsigned int)time(NULL));
+    int deck[36], deck_size = 36, idx = 0;
+    for (int v = 1; v <=9; v++) {
+        for (int i = 0; i < 4; i++) {
+            deck[idx] = v;
+            idx++;
+        }
+    }
+
+    shuffle(deck, deck_size);
+
+    LinkQueue player_a, player_b;
+    queue_init(&player_a);
+    queue_init(&player_b);
+
+    LinkStack table;
+    stack_init(&table);
+    int table_flag[9] = {0};
+
+    deal_cards(deck, deck_size, &player_a, &player_b);
+
+    int turn = 0;
+    while(1) {
+        turn++;
+        printf("第%d轮：", turn);
+        if(play_turn(&player_a, &table, table_flag, "甲")) {
+            printf("乙获胜！\n");
+            printf("\n");
+            break;
+        }
+        if(play_turn(&player_b, &table, table_flag, "乙")) {
+            printf("甲获胜！\n");
+            printf("\n");
+            break;
+        }
+        printf("\n");
+    }
+
+    printf("桌面剩余牌：");
+    stack_print(&table);
+    printf("\n");
+    if(!queue_is_empty(&player_a)) {
+        printf("甲方手牌：");
+        queue_print(&player_a);
+        printf("\n");
+    }
+    if(!queue_is_empty(&player_b)) {
+        printf("乙方手牌：");
+        queue_print(&player_b);
+        printf("\n");
+    }
+    printf("\n");
+    queue_destroy(&player_a);
+    queue_destroy(&player_b);
+    stack_destroy(&table);
 }
 
 int main(void) {
