@@ -135,15 +135,12 @@ int play_turn(PLinkQueue player, PLinkStack table,
     if (flag[card] == 1) {
         printf("桌上已有 %d，收牌", card);
         enqueue(player, card);
-        int collected = 1;
         while (1) {
             int top = pop(table);
             flag[top] = 0;
             enqueue(player, top);
-            collected++;
             if (top == card) break;
         }
-        printf(" 共收 %d 张", collected);
     } else {
         printf("无匹配，留在桌面");
         push(table, card);
