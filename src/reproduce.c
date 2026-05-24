@@ -18,7 +18,7 @@ typedef struct QNode{
 typedef struct {
     PQNode front;
     PQNode rear;
-} LinkQueue;
+} LinkQueue, *PLinkQueue;
 
 typedef struct SNode {
     int card;
@@ -27,17 +27,17 @@ typedef struct SNode {
 
 typedef struct {
     PSNode top;
-} LinkStack;
+} LinkStack, *PLinkStack;
 
-void queue_init(LinkQueue *q) {
+void queue_init(PLinkQueue q) {
     q->front = q->rear = NULL;
 }
 
-int queue_is_empty(LinkQueue *q) {
+int queue_is_empty(PLinkQueue q) {
     return q->front == NULL;
 }
 
-void enqueue(LinkQueue *q, int card) {
+void enqueue(PLinkQueue q, int card) {
     PQNode node = (PQNode)malloc(sizeof(QNode));
     node->card = card;
     node->next = NULL;  //不置NULL就是野指针
@@ -49,7 +49,7 @@ void enqueue(LinkQueue *q, int card) {
     }
 }
 
-int dequeue(LinkQueue *q) {
+int dequeue(PLinkQueue q) {
     PQNode tmp = q->front;
     int card = tmp->card;
     q->front = q->front->next;
@@ -60,7 +60,7 @@ int dequeue(LinkQueue *q) {
     return card;
 }
 
-int queue_length(LinkQueue *q) {
+int queue_length(PLinkQueue q) {
     int len = 0;
     PQNode p = q->front;
     while(p) {
@@ -70,7 +70,7 @@ int queue_length(LinkQueue *q) {
     return len;
 }
 
-void queue_print(LinkQueue *q) {
+void queue_print(PLinkQueue q) {
     PQNode p = q->front;
     if(!p) {
         printf("(空)");
@@ -85,28 +85,28 @@ void queue_print(LinkQueue *q) {
     }
 }
 
-void queue_destroy(LinkQueue *q){
+void queue_destroy(PLinkQueue q){
     while(!queue_is_empty(q)) {
         dequeue(q);
     }
 }
 
-void stack_init(LinkStack *s) {
+void stack_init(PLinkStack s) {
     s->top = NULL;
 }
 
-int stack_is_empty(LinkStack *s) {
+int stack_is_empty(PLinkStack s) {
     return s->top == NULL;
 }
 
-void push(LinkStack *s, int card) {
+void push(PLinkStack s, int card) {
     PSNode node = (PSNode)malloc(sizeof(SNode));
     node->card = card;
     node->next = s->top;
     s->top = node;
 }
 
-int pop(LinkStack *s) {
+int pop(PLinkStack s) {
     PSNode tmp = s->top;
     int card = tmp->card;
     s->top = s->top->next;
@@ -114,7 +114,7 @@ int pop(LinkStack *s) {
     return card;
 }
 
-void stack_print(LinkStack *s) {
+void stack_print(PLinkStack s) {
     if(s->top == NULL) {
         printf("(空)");
         return;
@@ -129,7 +129,7 @@ void stack_print(LinkStack *s) {
     }
 }
 
-void stack_destroy(LinkStack *s) {
+void stack_destroy(PLinkStack s) {
     while(!stack_is_empty(s)){
         pop(s);    
     }
