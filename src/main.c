@@ -150,8 +150,6 @@ int play_turn(PLinkQueue player, PLinkStack table,
         flag[card] = 1;
     }
 
-    printf("  |  手牌[%d]: ", queue_length(player));
-    queue_print(player);
     printf("\n");
     return queue_is_empty(player);
 }
