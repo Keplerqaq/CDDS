@@ -207,13 +207,11 @@ void fish_game(void) {
         turn++;
         printf("第%d轮：", turn);
         if(play_turn(&player_a, &table, table_flag, "甲")) {
-            printf("乙获胜！\n");
-            printf("\n");
+            printf("乙获胜！\n\n");
             break;
         }
         if(play_turn(&player_b, &table, table_flag, "乙")) {
-            printf("甲获胜！\n");
-            printf("\n");
+            printf("甲获胜！\n\n");
             break;
         }
         printf("\n");
@@ -225,14 +223,13 @@ void fish_game(void) {
     if(!queue_is_empty(&player_a)) {
         printf("甲方手牌：");
         queue_print(&player_a);
-        printf("\n");
+        printf("\n\n");
     }
     if(!queue_is_empty(&player_b)) {
         printf("乙方手牌：");
         queue_print(&player_b);
-        printf("\n");
+        printf("\n\n");
     }
-    printf("\n");
     queue_destroy(&player_a);
     queue_destroy(&player_b);
     stack_destroy(&table);
