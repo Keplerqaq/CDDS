@@ -130,7 +130,7 @@ void deal_cards(int deck[], int deck_size,
 int play_turn(PLinkQueue player, PLinkStack table,
               int *flag, char *who) {
     int card = dequeue(player);
-    printf("  %s出 [%d] → ", who, card);
+    printf("  %s出 [%d]，", who, card);
 
     if (flag[card] == 1) {
         printf("桌上已有 %d，收牌", card);
