@@ -154,8 +154,29 @@ void deal_cards(int deck[], int deck_size, PLinkQueue player_a, PLinkQueue playe
     }
 }
 
-int play_turn() {
-    
+int play_turn(PLinkQueue player, PLinkStack table, int flag[], char who[]) {
+    int card = dequeue(player);
+    printf("%s 出[%d]，", who, card);
+
+    if(flag[card] == 1) {
+        printf("桌上已有 %d， 收牌", card);
+        enqueue(player, card);
+        while(1) {
+            int top = pop(table);
+            flag[top] = 0;
+            enqueue(player, top);
+            if(top == card) {
+                break;
+            }
+        }
+    } else {
+        printf("无匹配，留在桌面");
+        push(table, card);
+        flag[card] = 1;
+    }
+
+    printf("\n");
+    return queue_is_empty(player);  //每出一次牌都要判空
 }
 
 int main(void) {
