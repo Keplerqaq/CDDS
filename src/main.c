@@ -133,7 +133,7 @@ int play_turn(PLinkQueue player, PLinkStack table,
     printf("  %s出 [%d] → ", who, card);
 
     if (flag[card] == 1) {
-        printf("桌上已有 %d，收牌！", card);
+        printf("桌上已有 %d，收牌", card);
         enqueue(player, card);
         int collected = 1;
         while (1) {
