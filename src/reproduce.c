@@ -144,6 +144,20 @@ void shuffle(int deck[], int n) {
     }
 }
 
+void deal_cards(int deck[], int deck_size, PLinkQueue player_a, PLinkQueue player_b) {
+    int half = deck_size / 2;
+    for(int i = 0; i < half; i++) {
+        enqueue(player_a, deck[i]);
+    }
+    for(int i = half; i < deck_size; i++) {
+        enqueue(player_b, deck[i]);
+    }
+}
+
+int play_turn() {
+    
+}
+
 int main(void) {
     while(1) {
         printf("=====数据结构课程设计======\n");
