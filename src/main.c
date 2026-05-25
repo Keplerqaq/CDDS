@@ -310,7 +310,7 @@ void MVA_SqList_Search(PSqList L) {
     }
 
     int idx = year - 1999;
-    printf("%s %d年: 制造业增加值 = %.2f 亿美元",
+    printf("%s%d年: 制造业增加值 = %.2f 亿美元",
            name, year, L->r[i].value_added[idx]);
     if (idx > 0)
         printf(", 增速 = %.2f%%", L->r[i].growth_rate[idx] * 100);

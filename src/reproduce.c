@@ -286,6 +286,40 @@ void MVA_SqList_Read(PSqList L, const char *filename) {
     printf("导入成功，共%d个国家。\n", L->length);
 }
 
+void MVA_SqList_Search(PSqList L) {
+    char name[30];
+    int year;
+
+    printf("请输入国家名：");
+    scanf("%s", name);
+    printf("请输入年份:");
+    scanf("%d", &year);
+
+    if (year < 1999 || year > 2019) {
+        printf("请输入1999 ～ 2019之间的年份！\n");
+        return;
+    }
+
+    int i;
+    for (i = 0; i < L->length; i++) {
+        if (strcmp(name, L->r[i].country) == 0) {
+            break;
+        }
+    }
+
+    if (i >= L->length) {
+        printf("未找到该国。\n");
+        return;
+    }
+
+    int idx = year - 1999;  //年份索引
+    printf("%s%d年：制造业增加值 = %.2f亿美元\n", name, year, L->r[i].value_added[idx]);
+    if (idx > 0) {
+        printf("%s%d年：增速 = %.2f%%\n", name, year, L->r[i].growth_rate[idx] * 100);
+    }
+}
+
+
 int main(void) {
     while(1) {
         printf("=====数据结构课程设计======\n");
