@@ -235,6 +235,23 @@ void fish_game(void) {
     stack_destroy(&table);
 }
 
+typedef struct {
+    char country[30];
+    int country_type;
+    float value_added[YEARS];
+    float growth_rate[YEARS];
+    int index_va[YEARS];
+    int index_gr[YEARS];
+} RecType;
+
+typedef struct {
+    RecType r[MAXSIZE];
+    int length;
+    int count_l, count_ml, count_mh, count_h;
+    int index_l[MAXSIZE], index_ml[MAXSIZE], index_mh[MAXSIZE], index_h[MAXSIZE];
+    int growth_done;
+} SqList;
+
 int main(void) {
     while(1) {
         printf("=====数据结构课程设计======\n");
