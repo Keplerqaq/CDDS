@@ -267,8 +267,6 @@ void MVA_SqList_Read(PSqList L, const char *filename) {
 
     while (n < MAXSIZE) {
         if (fscanf(fp, "%s %s", L->r[n].country, temp_type) != 2) break;
-        for (int i = 0; i < YEARS; i++)
-            fscanf(fp, "%f", &L->r[n].value_added[i]);
 
         if (strcmp(temp_type, "低收入国家") == 0)
             L->r[n].country_type = 0;
@@ -278,6 +276,9 @@ void MVA_SqList_Read(PSqList L, const char *filename) {
             L->r[n].country_type = 2;
         else if (strcmp(temp_type, "高收入国家") == 0)
             L->r[n].country_type = 3;
+
+        for (int i = 0; i < YEARS; i++)
+            fscanf(fp, "%f", &L->r[n].value_added[i]);
 
         n++;
     }
