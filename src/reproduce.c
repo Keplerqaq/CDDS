@@ -266,8 +266,24 @@ void MVA_SqList_Read(PSqList L, const char *filename) {
         if (fscanf(fp, "%s %s", L->r[n].country, temp_type) != 2) {
             break;
         }
-
+        if (strcmp(temp_type, "低收入国家") == 0) {
+            L->r[n].country_type = 0;
+        } else if (strcmp(temp_type, "中低等收入国家") == 0) {
+            L->r[n].country_type = 1;
+        } else if (strcmp(temp_type, "中高等收入国家") == 0) {
+            L->r[n].country_type = 2;
+        } else if (strcmp(temp_type, "高收入国家") == 0) {
+            L->r[n].country_type = 3;
+        }
+        for(int i = 0; i < YEARS; i++) {
+            fscanf(fp, "%f", &L->r[n].value_added[i]);
+        }
+        n++;
     }
+
+    L->length = n;
+    fclose(fp);
+    printf("导入成功，共%d个国家。\n", L->length);
 }
 
 int main(void) {
