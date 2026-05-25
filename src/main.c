@@ -234,9 +234,9 @@ typedef struct {
     int     length;
     int     count_l, count_ml, count_mh, count_h;  
     int     growth_done;
-} SqList;
+} SqList, *PSqList;
 
-int partition(SqList *L, int a[], int low, int high, int year) {
+int partition(PSqList L, int a[], int low, int high, int year) {
     int pivot = a[low];
     while (low < high) {
         while (low < high && L->r[a[high]].value_added[year] <= L->r[pivot].value_added[year])
@@ -250,7 +250,7 @@ int partition(SqList *L, int a[], int low, int high, int year) {
     return low;
 }
 
-void quick_sort_idx(SqList *L, int a[], int low, int high, int year) {
+void quick_sort_idx(PSqList L, int a[], int low, int high, int year) {
     if (low < high) {
         int p = partition(L, a, low, high, year);
         quick_sort_idx(L, a, low, p - 1, year);
@@ -258,7 +258,7 @@ void quick_sort_idx(SqList *L, int a[], int low, int high, int year) {
     }
 }
 
-void MVA_SqList_Read(SqList *L, const char *filename) {
+void MVA_SqList_Read(PSqList L, const char *filename) {
     FILE *fp = fopen(filename, "r");
     if (!fp) { printf("打开文件失败！请确认文件路径正确。\n"); return; }
 
@@ -287,7 +287,7 @@ void MVA_SqList_Read(SqList *L, const char *filename) {
     printf("导入成功，共 %d 个国家。\n", L->length);
 }
 
-void MVA_SqList_Search(SqList *L) {
+void MVA_SqList_Search(PSqList L) {
     char name[30];
     int  year;
 
@@ -316,7 +316,7 @@ void MVA_SqList_Search(SqList *L) {
     printf("\n");
 }
 
-void MVA_SqList_Calculate(SqList *L) {
+void MVA_SqList_Calculate(PSqList L) {
     for (int i = 0; i < L->length; i++) {
         L->r[i].growth_rate[0] = 0;  
         for (int k = 1; k < YEARS; k++) {
@@ -332,7 +332,7 @@ void MVA_SqList_Calculate(SqList *L) {
     printf("增速计算完成。\n");
 }
 
-void MVA_SqList_Sort_Va(SqList *L) {
+void MVA_SqList_Sort_Va(PSqList L) {
     int idx_arr[MAXSIZE];   
 
     for (int year = 0; year < YEARS; year++) {
@@ -355,7 +355,7 @@ void MVA_SqList_Sort_Va(SqList *L) {
     }
 }
 
-void group_sort_select(SqList *L, int *group, int group_size,
+void group_sort_select(PSqList L, int *group, int group_size,
                        int *result_idx, int year) {
     for (int i = 0; i < group_size; i++)
         result_idx[i] = group[i];
@@ -375,7 +375,7 @@ void group_sort_select(SqList *L, int *group, int group_size,
     }
 }
 
-void MVA_SqList_Sort_Gr(SqList *L) {
+void MVA_SqList_Sort_Gr(PSqList L) {
     if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
     int temp_rank[MAXSIZE];
 
@@ -417,7 +417,7 @@ void MVA_SqList_Sort_Gr(SqList *L) {
     }
 }
 
-void MVA_SqList_Analyze(SqList *L) {
+void MVA_SqList_Analyze(PSqList L) {
     if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
     char name[30];
     printf("请输入要分析的国家名：");
@@ -470,7 +470,7 @@ void MVA_SqList_Analyze(SqList *L) {
         printf("  → 该国制造业增加值波动较小，发展较平稳。\n");
 }
 
-void MVA_SqList_Save(SqList *L, const char *src_name) {
+void MVA_SqList_Save(PSqList L, const char *src_name) {
     char file_va[300], file_gr[300];
     FILE *fp;
 
