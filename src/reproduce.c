@@ -250,7 +250,25 @@ typedef struct {
     int count_l, count_ml, count_mh, count_h;
     int index_l[MAXSIZE], index_ml[MAXSIZE], index_mh[MAXSIZE], index_h[MAXSIZE];
     int growth_done;
-} SqList;
+} SqList, *PSqList;
+
+void MVA_SqList_Read(PSqList L, const char *filename) {
+    FILE *fp = fopen(filename, "r");
+    if (!fp) {
+        printf("打开文件失败，请检查文件路径是否正确！\n");
+        return;
+    }
+
+    int n = 0;
+    char temp_type[30];
+
+    while(n < MAXSIZE) {
+        if (fscanf(fp, "%s %s", L->r[n].country, temp_type) != 2) {
+            break;
+        }
+
+    }
+}
 
 int main(void) {
     while(1) {
