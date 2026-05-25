@@ -359,6 +359,24 @@ void quick_sort(PSqList L, int a[], int low, int high, int year) {
     }
 }
 
+void MVA_SqList_Sort_Va(PSqList L) {
+    int idx_arr[MAXSIZE];
+    for (int year = 0; year < YEARS; year++) {
+        for (int i = 0; i < L->length; i++) {
+            idx_arr[i] = i;
+        }
+        quick_sort(L, idx_arr, 0, L->length - 1, year);
+        for (int rank = 0; rank < L->length; rank++) {
+            L->r[idx_arr[rank]].index_va[year] = rank + 1;
+        }
+        printf("%d年增加值排名：\n", 1999 + year);
+        printf("%-4s %-20s %-10s\n", "名次", "国家", "增加值");
+        for (int j = 0; j < L->length; j++) {
+            int id = idx_arr[j];
+            printf("%-4d %-20s %-10.2f\n", j + 1, L->r[id].country, L->r[id].value_added[year]);
+        }
+    }
+}
 
 int main(void) {
     while(1) {
