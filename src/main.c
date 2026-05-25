@@ -220,9 +220,8 @@ typedef struct {
     char  country[30];               
     int   country_type;              
     float value_added[YEARS];        
-    float growth_rate[YEARS];        
-    int   year[YEARS];               
-    int   index_va[YEARS];           
+    float growth_rate[YEARS];
+    int   index_va[YEARS];
     int   index_gr[YEARS];           
 } RecType;
 
@@ -280,8 +279,6 @@ void MVA_SqList_Read(SqList *L, const char *filename) {
         else if (strcmp(temp_type, "高收入国家") == 0)
             L->r[n].country_type = 3;
 
-        for (int i = 0; i < YEARS; i++)
-            L->r[n].year[i] = 1999 + i;
         n++;
     }
 
