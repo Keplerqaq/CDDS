@@ -319,6 +319,22 @@ void MVA_SqList_Search(PSqList L) {
     }
 }
 
+void MVA_SqList_Calculate(PSqList L) {
+    for (int i = 0; i < L->length; i++) {
+        L->r[i].growth_rate[0] = 0;
+        for (int k = 1; k < YEARS; k++) {
+            float prev = L->r[i].value_added[k - 1];
+            if (prev == 0) {
+                L->r[i].growth_rate[k] = 0;
+            } else {
+                L->r[i].growth_rate[k] = (L->r[i].value_added[k] - prev) / prev;
+            }
+        }
+    }
+    L->growth_done = 1;
+    printf("增速计算完成！\n");
+}
+
 
 int main(void) {
     while(1) {
