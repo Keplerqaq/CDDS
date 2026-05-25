@@ -351,6 +351,14 @@ int partition(PSqList L, int a[], int low, int high, int year) {
     return low;
 }
 
+void quick_sort(PSqList L, int a[], int low, int high, int year) {
+    if (low < high) {
+        int p = partition(L, a, low, high, year);
+        quick_sort(L, a, low, p - 1, year);
+        quick_sort(L, a, p + 1, high, year);
+    }
+}
+
 
 int main(void) {
     while(1) {
