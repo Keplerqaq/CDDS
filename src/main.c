@@ -250,11 +250,11 @@ int partition(PSqList L, int a[], int low, int high, int year) {
     return low;
 }
 
-void quick_sort_idx(PSqList L, int a[], int low, int high, int year) {
+void quick_sort(PSqList L, int a[], int low, int high, int year) {
     if (low < high) {
         int p = partition(L, a, low, high, year);
-        quick_sort_idx(L, a, low, p - 1, year);
-        quick_sort_idx(L, a, p + 1, high, year);
+        quick_sort(L, a, low, p - 1, year);
+        quick_sort(L, a, p + 1, high, year);
     }
 }
 
@@ -341,7 +341,7 @@ void MVA_SqList_Sort_Va(PSqList L) {
         for (int i = 0; i < L->length; i++)
             idx_arr[i] = i;
 
-        quick_sort_idx(L, idx_arr, 0, L->length - 1, year);
+        quick_sort(L, idx_arr, 0, L->length - 1, year);
 
         for (int rank = 0; rank < L->length; rank++)
             L->r[idx_arr[rank]].index_va[year] = rank + 1;
