@@ -6,8 +6,6 @@
 #define MAXSIZE 96
 #define YEARS 21
 
-void manufacturing_system(void) {}
-
 typedef struct QNode{
     int card;
     struct QNode *next;
@@ -370,12 +368,21 @@ void MVA_SqList_Sort_Va(PSqList L) {
             L->r[idx_arr[rank]].index_va[year] = rank + 1;
         }
         printf("%d年增加值排名：\n", 1999 + year);
-        printf("%-4s %-20s %-10s\n", "名次", "国家", "增加值");
+        printf("%-4s %-30s %-10s\n", "名次", "国家", "增加值");
         for (int j = 0; j < L->length; j++) {
             int id = idx_arr[j];
-            printf("%-4d %-20s %-10.2f\n", j + 1, L->r[id].country, L->r[id].value_added[year]);
+            printf("%-4d %-30s %-10.2f\n", j + 1, L->r[id].country, L->r[id].value_added[year]);
         }
     }
+}
+
+void manufacturing_system(void) {
+    SqList L;
+    L.length = 0;
+    L.growth_done = 0;
+    MVA_SqList_Read(&L, "制造业分析_inputdate.txt");
+    MVA_SqList_Calculate(&L);
+    MVA_SqList_Sort_Va(&L);
 }
 
 int main(void) {
