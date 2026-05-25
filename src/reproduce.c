@@ -335,6 +335,22 @@ void MVA_SqList_Calculate(PSqList L) {
     printf("增速计算完成！\n");
 }
 
+int partition(PSqList L, int a[], int low, int high, int year) {
+    int pivot = a[low];
+    while (low < high) {
+        while (low < high && L->r[a[high]].value_added[year] <= L->r[pivot].value_added[year]) {
+            high--;
+        }
+        a[low] = a[high];
+        while (low < high && L->r[a[low]].value_added[year] >= L->r[pivot].value_added[year]) {
+            low++;
+        }
+        a[high] = a[low];
+    }
+    a[low] = pivot;
+    return low;
+}
+
 
 int main(void) {
     while(1) {
