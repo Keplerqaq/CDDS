@@ -364,9 +364,8 @@ void group_sort_select(PSqList L, int *group, int group_size,
     for (int i = 0; i < group_size - 1; i++) {
         int max = i;
         for (int j = i + 1; j < group_size; j++) {
-            float gr_j = L->r[result_idx[j]].growth_rate[year];
-            float gr_max = L->r[result_idx[max]].growth_rate[year];
-            if (gr_j > gr_max) max = j;
+            if (L->r[result_idx[j]].growth_rate[year] > L->r[result_idx[max]].growth_rate[year])
+                max = j;
         }
         if (max != i) {
             int tmp = result_idx[i];
