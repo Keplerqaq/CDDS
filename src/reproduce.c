@@ -421,7 +421,27 @@ void MVA_SqList_Sort_Gr(PSqList L) {
         }
     }
 
+    char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
+    int *groups[] = {L->index_l, L->index_ml, L->index_mh, L->index_h};
+    int sizes[] = {L->count_l, L->count_ml, L->count_mh, L->count_h};
+
     for (int year = 0; year < YEARS; year++) {
+        for (int g = 0; g < 4; g++) {
+            group_sort_select(L, groups[g], sizes[g], temp_rank, year);
+            for (int rank = 0; rank < sizes[g]; rank++) {
+                L->r[temp_rank[rank]].index_gr[year] = rank + 1; 
+            }
+
+            printf("%d年%s国家增速排名：\n", 1999 + year, type_name[g]);
+            printf("%-4s %-25s %10s\n", "名次", "国家", "增速");
+            for (int j = 0; j < sizes[g]; j++) {
+                printf("%-4d %-25s %10.2f%%\n", j + 1, L->r[temp_rank[j]].country, L->r[temp_rank[j]].growth_rate[year] * 100);
+            }
+        }
+    }
+
+    /**
+     * for (int year = 0; year < YEARS; year++) {
         group_sort_select(L, L->index_l, L->count_l, temp_rank, year);
         for (int rank = 0; rank < L->count_l; rank++) {
             L->r[temp_rank[rank]].index_gr[year] = rank + 1;
@@ -466,6 +486,7 @@ void MVA_SqList_Sort_Gr(PSqList L) {
             printf("%-4d %-30s %-10.2f%%\n", j + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
         }
     }
+     */
 }
 
 void manufacturing_system(void) {
