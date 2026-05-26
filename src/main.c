@@ -389,10 +389,6 @@ void MVA_SqList_Sort_Gr(PSqList L) {
         }
     }
 
-    for (int i = 0; i < L->length; i++)
-        for (int year = 0; year < YEARS; year++)
-            L->r[i].index_gr[year] = i;
-
     char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
     int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
     int   sizes[]      = {L->count_l, L->count_ml, L->count_mh, L->count_h};
