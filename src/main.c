@@ -395,7 +395,6 @@ void MVA_SqList_Sort_Gr(PSqList L) {
 
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
-            if (sizes[g] == 0) continue;
             group_sort_select(L, groups[g], sizes[g], temp_rank, year);
 
             for (int rank = 0; rank < sizes[g]; rank++)
