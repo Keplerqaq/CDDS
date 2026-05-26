@@ -554,9 +554,7 @@ int MVA_Menu_Show(void) {
 }
 
 void manufacturing_system(void) {
-    SqList L;
-    L.length = 0;
-    L.growth_done = 0;
+    SqList L = {0};
     char filename[300] = "制造业分析_inputdate.txt";
     int  loaded = 0;
 
