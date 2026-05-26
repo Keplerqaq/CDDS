@@ -376,6 +376,27 @@ void MVA_SqList_Sort_Va(PSqList L) {
     }
 }
 
+void group_sort_select(PSqList L, int group[], int group_size, int result_idx[], int year) {
+    for (int i = 0; i < group_size; i++) {
+        result_idx[i] = group[i];
+    }
+
+    for (int i = 0; i < group_size - 1; i++) {
+        int max = i;
+        for (int j = i + 1; j < group_size; j++) {
+            if (L->r[result_idx[j]].growth_rate[year] > L->r[result_idx[max]].growth_rate[year]) {
+                max = j;
+            }
+        }
+
+        if (max != i) {
+            int temp = result_idx[i];
+            result_idx[i] = result_idx[max];
+            result_idx[max] = temp;
+        }
+    }
+}
+
 void manufacturing_system(void) {
     SqList L;
     L.length = 0;
