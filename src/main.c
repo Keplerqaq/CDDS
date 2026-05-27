@@ -570,14 +570,6 @@ void manufacturing_system(void) {
                 printf("退出制造业统计分析系统。\n");
                 return;
             case 1:
-                printf("请输入数据文件名（默认: %s）：", filename);
-                getchar();
-                {
-                    char tmp[300];
-                    fgets(tmp, sizeof(tmp), stdin);
-                    tmp[strcspn(tmp, "\n")] = 0;
-                    if (strlen(tmp) > 0) strcpy(filename, tmp);
-                }
                 MVA_SqList_Read(&L, filename);
                 if (L.length > 0) loaded = 1;
                 break;
