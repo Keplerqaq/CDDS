@@ -473,14 +473,10 @@ void MVA_SqList_Save(PSqList L, const char *src_name) {
     char file_va[100], file_gr[100];
     FILE *fp;
 
-    if (L->r[0].index_va[0] == 0) {
-        printf("（自动执行增加值排名...）\n");
+    if (L->r[0].index_va[0] == 0)
         MVA_SqList_Sort_Va(L, 0);
-    }
-    if (L->r[0].index_gr[0] == 0) {
-        printf("（自动执行增速排名...）\n");
+    if (L->r[0].index_gr[0] == 0)
         MVA_SqList_Sort_Gr(L, 0);
-    }
 
     int len = (int)strlen(src_name);
     strncpy(file_va, src_name, len - 4); file_va[len - 4] = '\0';
