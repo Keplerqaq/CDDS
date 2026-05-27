@@ -466,7 +466,7 @@ void MVA_SqList_Analyze(PSqList L) {
 }
 
 void MVA_SqList_Save(PSqList L, const char *src_name) {
-    char file_va[300], file_gr[300];
+    char file_va[100], file_gr[100];
     FILE *fp;
 
     if (L->r[0].index_va[0] == 0) {
