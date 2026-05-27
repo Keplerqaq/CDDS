@@ -454,9 +454,9 @@ void MVA_SqList_Analyze(PSqList L) {
     float var_gr = sum_sq_gr / (YEARS - 1);
 
     printf("\n%s 1999-2019 年制造业统计分析：\n", name);
-    printf("  增加值 最小值: %.2f, 最大值: %.2f, 均值: %.2f, 方差: %.2f\n",
+    printf("  增加值最小值: %.2f, 最大值: %.2f, 均值: %.2f, 方差: %.2f\n",
            min_va, max_va, avg_va, var_va);
-    printf("  增速   最小值: %.2f%%, 最大值: %.2f%%, 均值: %.2f%%, 方差: %.6f\n",
+    printf("  增速最小值: %.2f%%, 最大值: %.2f%%, 均值: %.2f%%, 方差: %.6f\n",
            min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
 
     if (var_va > 1e6)
