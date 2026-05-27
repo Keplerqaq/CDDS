@@ -440,53 +440,67 @@ void MVA_SqList_Sort_Gr(PSqList L) {
         }
     }
 
-    /**
-     * for (int year = 0; year < YEARS; year++) {
-        group_sort_select(L, L->index_l, L->count_l, temp_rank, year);
-        for (int rank = 0; rank < L->count_l; rank++) {
-            L->r[temp_rank[rank]].index_gr[year] = rank + 1;
-        }
-        printf("%-4d年 低收入国家增速排名\n", 1999 + year);
-        printf("%-4s %-30s %-10s\n", "名次", "国家", "增速");
-        for (int j = 0; j < L->count_l; j++) {
-            int id = temp_rank[j];
-            printf("%-4d %-30s %-10.2f%%\n", j + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
-        }
+}
 
-        group_sort_select(L, L->index_ml, L->count_ml, temp_rank, year);
-        for (int rank = 0; rank < L->count_ml; rank++) {
-            L->r[temp_rank[rank]].index_gr[year] = rank + 1;
-        }
-        printf("%-4d年 中低收入国家增速排名\n", 1999 + year);
-        printf("%-4s %-30s %-10s\n", "名次", "国家", "增速");
-        for (int j = 0; j < L->count_ml; j++) {
-            int id = temp_rank[j];
-            printf("%-4d %-30s %-10.2f%%\n", j + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
-        }
-
-        group_sort_select(L, L->index_mh, L->count_mh, temp_rank, year);
-        for (int rank = 0; rank < L->count_mh; rank++) {
-            L->r[temp_rank[rank]].index_gr[year] = rank + 1;
-        }
-        printf("%-4d年 中高收入国家增速排名\n", 1999 + year);
-        printf("%-4s %-30s %-10s\n", "名次", "国家", "增速");
-        for (int j = 0; j < L->count_mh; j++) {
-            int id = temp_rank[j];
-            printf("%-4d %-30s %-10.2f%%\n", j + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
-        }
-
-        group_sort_select(L, L->index_h, L->count_h, temp_rank, year);
-        for (int rank = 0; rank < L->count_h; rank++) {
-            L->r[temp_rank[rank]].index_gr[year] = rank + 1;
-        }
-        printf("%-4d年 高收入国家增速排名\n", 1999 + year);
-        printf("%-4s %-30s %-10s\n", "名次", "国家", "增速");
-        for (int j = 0; j < L->count_h; j++) {
-            int id = temp_rank[j];
-            printf("%-4d %-30s %-10.2f%%\n", j + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
+void MVA_SqList_Analyze(PSqList L) {
+    if (L->growth_done == 0) {
+        printf("请先执行增速计算！\n");
+        return;
+    }
+    char name[30];
+    printf("请输入要分析的国家名：");
+    scanf("%s", name);
+    int i;
+    for (i = 0; i < L->length; i++) {
+        if (strcmp(name, L->r[i].country) == 0) {
+            break;
         }
     }
-     */
+
+    if (i >= L->length) {
+        printf("未找到该国。\n");
+        return;
+    }
+
+    RecType *rec = &L->r[i];
+
+    float min_va = rec->value_added[0], max_va = rec->value_added[0], sum_va = 0, sum_sq_va = 0;
+    float min_gr = rec->growth_rate[0], max_gr = rec->growth_rate[0], sum_gr = 0, sum_sq_gr = 0;
+
+    for (int k = 0; k < YEARS; k++) {
+        float v = rec->value_added[k];
+        if (v < min_va) {
+            min_va = v;
+        }
+        if (v > max_va) {
+            max_va = v;
+        }
+        sum_va += v;
+
+        float g = rec->growth_rate[k];
+        if (g < min_gr) {
+            min_gr = g;
+        }
+        if (g > max_gr) {
+            max_gr = g;
+        }
+        sum_gr += g;
+    }
+
+    float avg_va = sum_va / YEARS;
+    float avg_gr = sum_gr / YEARS;
+
+    for (int k = 0; k < YEARS; k++) {
+        sum_sq_va += (rec->value_added[k] - avg_va) * (rec->value_added[k] - avg_va);
+        sum_sq_gr += (rec->growth_rate[k] - avg_gr) * (rec->growth_rate[k] - avg_gr);
+    }
+
+    float var_va = sum_sq_va / (YEARS - 1);
+    float var_gr = sum_sq_gr / (YEARS - 1);
+
+    printf("%s1999 - 2019年制造业统计分析：\n", name);
+    printf("增加值最小值：%.2f，最大值：%.2f，均值：%.2f，方差：%.2f\n", min_va, max_va, avg_va, var_va);
+    printf("增速最小值：%.2f%%，最大值：%.2f%%，均值：%.2f%%，方差：%.6f\n", min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
 }
 
 void manufacturing_system(void) {
