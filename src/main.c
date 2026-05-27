@@ -570,7 +570,7 @@ void manufacturing_system(void) {
                 printf("退出制造业统计分析系统。\n");
                 return;
             case 1:
-                printf("请输入数据文件名（默认: 制造业分析_inputdate.txt）：");
+                printf("请输入数据文件名（默认: %s）：", filename);
                 getchar();
                 {
                     char tmp[300];
