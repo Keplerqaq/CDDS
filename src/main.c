@@ -579,7 +579,7 @@ void manufacturing_system(void) {
                     if (strlen(tmp) > 0) strcpy(filename, tmp);
                 }
                 MVA_SqList_Read(&L, filename);
-                loaded = 1;
+                if (L.length > 0) loaded = 1;
                 break;
             case 2: MVA_SqList_Search(&L); break;
             case 3: MVA_SqList_Calculate(&L); break;
