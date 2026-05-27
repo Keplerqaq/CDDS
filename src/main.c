@@ -471,7 +471,6 @@ void MVA_SqList_Analyze(PSqList L) {
 
 void MVA_SqList_Save(PSqList L, const char *src_name) {
     char file_va[100], file_gr[100];
-    FILE *fp;
 
     if (L->r[0].index_va[0] == 0)
         MVA_SqList_Sort_Va(L, 0);
@@ -484,7 +483,7 @@ void MVA_SqList_Save(PSqList L, const char *src_name) {
     strcat(file_va, "_Sorted.txt");
     strcat(file_gr, "_Grouped_Sorted.txt");
 
-    fp = fopen(file_va, "w");
+    FILE *fp = fopen(file_va, "w");
     if (!fp) { printf("无法创建文件 %s\n", file_va); return; }
     int rank_idx[MAXSIZE];
     for (int year = 0; year < YEARS; year++) {
