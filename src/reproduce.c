@@ -285,6 +285,10 @@ void MVA_SqList_Read(PSqList L, const char *filename) {
 }
 
 void MVA_SqList_Search(PSqList L) {
+    if (L->growth_done == 0) {
+        printf("请先执行增速计算！\n");
+        return;
+    }
     char name[30];
     int year;
 
@@ -572,16 +576,58 @@ void MVA_SqList_Save(PSqList L, const char *src_name) {
     printf("排名结果已保存至:\n增加值排名：%s\n增速排名：%s\n", file_va, file_gr);
 
 }
+int MVA_Menu_Show(void) {
+    printf("\n========== 世界各国制造业增加值统计分析系统 ==========\n");
+    printf("*  1: 原始数据导入        2: 原始数据查询             *\n");
+    printf("*  3: 增速计算            4: 增加值排名               *\n");
+    printf("*  5: 增速排名            6: 增加值分析               *\n");
+    printf("*  7: 统计结果保存        0: 退出                     *\n");
+    printf("========================================================\n");
+    printf("请输入选择（0-7）：");
+    int choice;
+    while(1) {
+        scanf("%d", &choice);
+        if (choice >= 0 && choice <= 7) {
+            return choice;
+        }
+        printf("输入无效，请重新输入");
+    }
+}
 
 void manufacturing_system(void) {
-    SqList L;
-    L.length = 0;
-    L.growth_done = 0;
-    MVA_SqList_Read(&L, "制造业分析_inputdate.txt");
-    MVA_SqList_Calculate(&L);
-    //MVA_SqList_Sort_Va(&L, 1);
-    //MVA_SqList_Sort_Gr(&L, 1);
-    MVA_SqList_Analyze(&L);
+    SqList L = {0};
+    char filename[100] = "制造业分析_inputdate.txt";
+    while(1) {
+        int choice = MVA_Menu_Show();
+        switch (choice) {
+            case 0:
+                printf("退出制造业分析系统。\n");
+                return;
+            case 1:
+                MVA_SqList_Read(&L, filename);
+                break;
+            case 2:
+                MVA_SqList_Search(&L);
+                break;
+            case 3:
+                MVA_SqList_Calculate(&L);
+                break;
+            case 4:
+                MVA_SqList_Sort_Va(&L, 1);
+                break;
+            case 5:
+                MVA_SqList_Sort_Gr(&L, 1);
+                break;
+            case 6:
+                MVA_SqList_Analyze(&L);
+                break;
+            case 7:
+                MVA_SqList_Save(&L, filename);
+                break;
+            default:
+                printf("无效选择，请重新输入！\n");
+        }
+    }
 }
 
 int main(void) {
