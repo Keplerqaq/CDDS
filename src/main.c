@@ -478,7 +478,7 @@ void MVA_SqList_Save(PSqList L, const char *src_name) {
     if (L->r[0].index_gr[0] == 0)
         MVA_SqList_Sort_Gr(L, 0);
 
-    int len = (int)strlen(src_name);
+    int len = strlen(src_name);
     strncpy(file_va, src_name, len - 4); file_va[len - 4] = '\0';
     strncpy(file_gr, src_name, len - 4); file_gr[len - 4] = '\0';
     strcat(file_va, "_Sorted.txt");
