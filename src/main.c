@@ -3,7 +3,10 @@
 #include <string.h>
 #include <time.h>
 
-typedef struct QNode {
+#define MAXSIZE 96
+#define YEARS 21
+
+typedef struct QNode{
     int card;
     struct QNode *next;
 } QNode, *PQNode;
@@ -12,6 +15,15 @@ typedef struct {
     PQNode front;
     PQNode rear;
 } LinkQueue, *PLinkQueue;
+
+typedef struct SNode {
+    int card;
+    struct SNode *next;
+} SNode, *PSNode;
+
+typedef struct {
+    PSNode top;
+} LinkStack, *PLinkStack;
 
 void queue_init(PLinkQueue q) {
     q->front = q->rear = NULL;
@@ -24,8 +36,8 @@ int queue_is_empty(PLinkQueue q) {
 void enqueue(PLinkQueue q, int card) {
     PQNode node = (PQNode)malloc(sizeof(QNode));
     node->card = card;
-    node->next = NULL;
-    if (queue_is_empty(q)) {
+    node->next = NULL;  //不置NULL就是野指针
+    if(queue_is_empty(q)) {
         q->front = q->rear = node;
     } else {
         q->rear->next = node;
@@ -37,7 +49,9 @@ int dequeue(PLinkQueue q) {
     PQNode tmp = q->front;
     int card = tmp->card;
     q->front = q->front->next;
-    if (q->front == NULL) q->rear = NULL;
+    if(q->front == NULL) {
+        q->rear = NULL;
+    }
     free(tmp);
     return card;
 }
@@ -45,32 +59,33 @@ int dequeue(PLinkQueue q) {
 int queue_length(PLinkQueue q) {
     int len = 0;
     PQNode p = q->front;
-    while (p) { len++; p = p->next; }
+    while(p) {
+        len++;
+        p = p->next;
+    }
     return len;
 }
 
 void queue_print(PLinkQueue q) {
     PQNode p = q->front;
-    if (!p) { printf("（空）"); return; }
-    while (p) {
-        printf("%d", p->card);
+    if(!p) {
+        printf("(空)");
+        return;
+    }
+    while(p) {
+        printf ("%d ", p->card);
         p = p->next;
-        if (p) printf(", ");
+        if(p) {
+            printf(", ");
+        }
     }
 }
 
-void queue_destroy(PLinkQueue q) {
-    while (!queue_is_empty(q)) dequeue(q);
+void queue_destroy(PLinkQueue q){
+    while(!queue_is_empty(q)) {
+        dequeue(q);
+    }
 }
-
-typedef struct SNode {
-    int card;
-    struct SNode *next;
-} SNode, *PSNode;
-
-typedef struct {
-    PSNode top;
-} LinkStack, *PLinkStack;
 
 void stack_init(PLinkStack s) {
     s->top = NULL;
@@ -96,154 +111,242 @@ int pop(PLinkStack s) {
 }
 
 void stack_print(PLinkStack s) {
-    if (!s->top) { printf("（空）"); return; }
+    if(s->top == NULL) {
+        printf("(空)");
+        return;
+    }
     PSNode p = s->top;
-    while (p) {
-        printf("%d", p->card);
+    while(p) {
+        printf("%d ", p->card);
         p = p->next;
-        if (p) printf(", ");
+        if(p){
+            printf(", ");
+        }
     }
 }
 
 void stack_destroy(PLinkStack s) {
-    while (!stack_is_empty(s)) pop(s);
+    while(!stack_is_empty(s)){
+        pop(s);    
+    }
 }
 
 void shuffle(int deck[], int n) {
-    for (int i = n - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
+    for(int i = n -1; i > 0; i--) {
+        int j = rand() % (i + 1);   // 0 ~ i
         int tmp = deck[i];
         deck[i] = deck[j];
         deck[j] = tmp;
     }
 }
 
-void deal_cards(int deck[], int deck_size,
-                PLinkQueue player_a, PLinkQueue player_b) {
+void deal_cards(int deck[], int deck_size, PLinkQueue player_a, PLinkQueue player_b) {
     int half = deck_size / 2;
-    for (int i = 0; i < half; i++)
+    for(int i = 0; i < half; i++) {
         enqueue(player_a, deck[i]);
-    for (int i = half; i < deck_size; i++)
+    }
+    for(int i = half; i < deck_size; i++) {
         enqueue(player_b, deck[i]);
+    }
 }
 
-int play_turn(PLinkQueue player, PLinkStack table,
-              int flag[], char who[]) {
+int play_turn(PLinkQueue player, PLinkStack table, int flag[], char who[]) {
     int card = dequeue(player);
-    printf("%s 出[%d]，", who, card);
+    printf("%s出%d，", who, card);
 
-    if (flag[card] == 1) {
+    if(flag[card - 1] == 1) {
         printf("桌上已有 %d，收牌", card);
         enqueue(player, card);
-        while (1) {
+        while(1) {
             int top = pop(table);
-            flag[top] = 0;
+            flag[top - 1] = 0;
             enqueue(player, top);
-            if (top == card) break;
+            if(top == card) {
+                break;
+            }
         }
     } else {
         printf("无匹配，留在桌面");
         push(table, card);
-        flag[card] = 1;
+        flag[card - 1] = 1;
     }
 
     printf("\n");
-    return queue_is_empty(player);
+    return queue_is_empty(player);  //每出一次牌都要判空
 }
 
 void fish_game(void) {
-    srand((unsigned int)time(NULL));
-
     printf("========================================\n");
-    printf("         小猫钓鱼游戏\n");
+    printf("            小猫钓鱼游戏\n");
     printf("========================================\n\n");
-
+    srand((unsigned int)time(NULL));
     int deck[36], deck_size = 36, idx = 0;
-    for (int v = 1; v <= 9; v++)
-        for (int i = 0; i < 4; i++)
-            deck[idx++] = v;
+    for (int v = 1; v <=9; v++) {
+        for (int i = 0; i < 4; i++) {
+            deck[idx] = v;
+            idx++;
+        }
+    }
 
     shuffle(deck, deck_size);
 
     LinkQueue player_a, player_b;
     queue_init(&player_a);
     queue_init(&player_b);
-    deal_cards(deck, deck_size, &player_a, &player_b);
 
     LinkStack table;
     stack_init(&table);
-    int table_flag[10] = {0};
+    int table_flag[9] = {0};
 
-    printf("初始手牌：\n");
-    printf("  甲 (%d张): ", queue_length(&player_a));
-    queue_print(&player_a);
-    printf("\n  乙 (%d张): ", queue_length(&player_b));
-    queue_print(&player_b);
-    printf("\n\n");
+    deal_cards(deck, deck_size, &player_a, &player_b);
 
-    int round = 0;
-    while (1) {
-        round++;
-        printf("第 %d 轮：", round);
-        if (play_turn(&player_a, &table, table_flag, "甲")) {
-            printf("\n甲手牌出完，乙获胜！\n"); break;
+    int turn = 0;
+    while(1) {
+        turn++;
+        printf("第%d轮：", turn);
+        if(play_turn(&player_a, &table, table_flag, "甲")) {
+            printf("乙获胜！\n\n");
+            break;
         }
-        printf("       ");
-        if (play_turn(&player_b, &table, table_flag, "乙")) {
-            printf("\n乙手牌出完，甲获胜！\n"); break;
+        if(play_turn(&player_b, &table, table_flag, "乙")) {
+            printf("甲获胜！\n\n");
+            break;
         }
         printf("\n");
     }
 
-    printf("\n========================================\n");
-    printf("              游戏结束\n");
-    printf("========================================\n");
-    printf("桌面剩余牌（栈顶→栈底）: ");
+    printf("桌面剩余牌：");
     stack_print(&table);
     printf("\n");
-    if (!queue_is_empty(&player_a)) {
-        printf("甲方手牌: "); queue_print(&player_a); printf("\n");
+    if(!queue_is_empty(&player_a)) {
+        printf("甲方手牌：");
+        queue_print(&player_a);
+        printf("\n\n");
     }
-    if (!queue_is_empty(&player_b)) {
-        printf("乙方手牌: "); queue_print(&player_b); printf("\n");
+    if(!queue_is_empty(&player_b)) {
+        printf("乙方手牌：");
+        queue_print(&player_b);
+        printf("\n\n");
     }
-
     queue_destroy(&player_a);
     queue_destroy(&player_b);
     stack_destroy(&table);
 }
 
-#define MAXSIZE 96
-#define YEARS   21          
-
 typedef struct {
-    char  country[30];               
-    int   country_type;              
-    float value_added[YEARS];        
+    char country[30];
+    int country_type;
+    float value_added[YEARS];
     float growth_rate[YEARS];
-    int   index_va[YEARS];
-    int   index_gr[YEARS];           
+    int index_va[YEARS];
+    int index_gr[YEARS];
 } RecType;
 
 typedef struct {
     RecType r[MAXSIZE];
-    int     index_l[MAXSIZE];    
-    int     index_ml[MAXSIZE];   
-    int     index_mh[MAXSIZE];   
-    int     index_h[MAXSIZE];    
-    int     length;
-    int     count_l, count_ml, count_mh, count_h;  
-    int     growth_done;
+    int length;
+    int count_l, count_ml, count_mh, count_h;
+    int index_l[MAXSIZE], index_ml[MAXSIZE], index_mh[MAXSIZE], index_h[MAXSIZE];
+    int growth_done;
 } SqList, *PSqList;
+
+void MVA_SqList_Read(PSqList L, const char *filename) {
+    FILE *fp = fopen(filename, "r");
+    if (!fp) {
+        printf("打开文件失败，请检查文件路径是否正确！\n");
+        return;
+    }
+
+    int n = 0;
+    char temp_type[30];
+
+    while(n < MAXSIZE) {
+        if (fscanf(fp, "%s %s", L->r[n].country, temp_type) != 2) {
+            break;
+        }
+        if (strcmp(temp_type, "低收入国家") == 0) {
+            L->r[n].country_type = 0;
+        } else if (strcmp(temp_type, "中低等收入国家") == 0) {
+            L->r[n].country_type = 1;
+        } else if (strcmp(temp_type, "中高等收入国家") == 0) {
+            L->r[n].country_type = 2;
+        } else if (strcmp(temp_type, "高收入国家") == 0) {
+            L->r[n].country_type = 3;
+        }
+        for(int i = 0; i < YEARS; i++) {
+            fscanf(fp, "%f", &L->r[n].value_added[i]);
+        }
+        n++;
+    }
+
+    L->length = n;
+    fclose(fp);
+    printf("导入成功，共%d个国家。\n", L->length);
+}
+
+void MVA_SqList_Search(PSqList L) {
+    if (L->growth_done == 0) {
+        printf("请先执行增速计算！\n");
+        return;
+    }
+    char name[30];
+    int year;
+
+    printf("请输入国家名：");
+    scanf("%s", name);
+    printf("请输入年份:");
+    scanf("%d", &year);
+
+    if (year < 1999 || year > 2019) {
+        printf("请输入1999 ～ 2019之间的年份！\n");
+        return;
+    }
+
+    int i;
+    for (i = 0; i < L->length; i++) {
+        if (strcmp(name, L->r[i].country) == 0) {
+            break;
+        }
+    }
+
+    if (i >= L->length) {
+        printf("未找到该国。\n");
+        return;
+    }
+
+    int idx = year - 1999;  //年份索引
+    printf("%s%d年：制造业增加值 = %.2f亿美元\n", name, year, L->r[i].value_added[idx]);
+    if (idx > 0) {
+        printf("%s%d年：增速 = %.2f%%\n", name, year, L->r[i].growth_rate[idx] * 100);
+    }
+}
+
+void MVA_SqList_Calculate(PSqList L) {
+    for (int i = 0; i < L->length; i++) {
+        L->r[i].growth_rate[0] = 0;
+        for (int k = 1; k < YEARS; k++) {
+            float prev = L->r[i].value_added[k - 1];
+            if (prev == 0) {
+                L->r[i].growth_rate[k] = 0;
+            } else {
+                L->r[i].growth_rate[k] = (L->r[i].value_added[k] - prev) / prev;
+            }
+        }
+    }
+    L->growth_done = 1;
+    printf("增速计算完成！\n");
+}
 
 int partition(PSqList L, int a[], int low, int high, int year) {
     int pivot = a[low];
     while (low < high) {
-        while (low < high && L->r[a[high]].value_added[year] <= L->r[pivot].value_added[year])
+        while (low < high && L->r[a[high]].value_added[year] <= L->r[pivot].value_added[year]) {
             high--;
+        }
         a[low] = a[high];
-        while (low < high && L->r[a[low]].value_added[year] >= L->r[pivot].value_added[year])
+        while (low < high && L->r[a[low]].value_added[year] >= L->r[pivot].value_added[year]) {
             low++;
+        }
         a[high] = a[low];
     }
     a[low] = pivot;
@@ -258,192 +361,137 @@ void quick_sort(PSqList L, int a[], int low, int high, int year) {
     }
 }
 
-void MVA_SqList_Read(PSqList L, const char *filename) {
-    FILE *fp = fopen(filename, "r");
-    if (!fp) { printf("打开文件失败！请确认文件路径正确。\n"); return; }
-
-    int n = 0;
-    char temp_type[30];
-
-    while (n < MAXSIZE) {
-        if (fscanf(fp, "%s %s", L->r[n].country, temp_type) != 2) break;
-
-        if (strcmp(temp_type, "低收入国家") == 0)
-            L->r[n].country_type = 0;
-        else if (strcmp(temp_type, "中低等收入国家") == 0)
-            L->r[n].country_type = 1;
-        else if (strcmp(temp_type, "中高等收入国家") == 0)
-            L->r[n].country_type = 2;
-        else if (strcmp(temp_type, "高收入国家") == 0)
-            L->r[n].country_type = 3;
-
-        for (int i = 0; i < YEARS; i++)
-            fscanf(fp, "%f", &L->r[n].value_added[i]);
-
-        n++;
-    }
-
-    L->length = n;
-    fclose(fp);
-    printf("导入成功，共 %d 个国家。\n", L->length);
-}
-
-void MVA_SqList_Search(PSqList L) {
-    char name[30];
-    int  year;
-
-    printf("请输入国家名：");
-    scanf("%s", name);
-    printf("请输入年份：");
-    scanf("%d", &year);
-
-    if (year < 1999 || year > 2019) {
-        printf("请输入1999 ～ 2019之间的年份！\n"); return;
-    }
-
-    int i;
-    for (i = 0; i < L->length; i++)
-        if (strcmp(name, L->r[i].country) == 0) break;
-
-    if (i >= L->length) {
-        printf("未找到该国。\n"); return;
-    }
-
-    int idx = year - 1999;
-    printf("%s%d年: 制造业增加值 = %.2f 亿美元",
-           name, year, L->r[i].value_added[idx]);
-    if (idx > 0)
-        printf(", 增速 = %.2f%%", L->r[i].growth_rate[idx] * 100);
-    printf("\n");
-}
-
-void MVA_SqList_Calculate(PSqList L) {
-    for (int i = 0; i < L->length; i++) {
-        L->r[i].growth_rate[0] = 0;  
-        for (int k = 1; k < YEARS; k++) {
-            float prev = L->r[i].value_added[k - 1];
-            if (prev == 0)
-                L->r[i].growth_rate[k] = 0;
-            else
-                L->r[i].growth_rate[k] =
-                    (L->r[i].value_added[k] - prev) / prev;
-        }
-    }
-    L->growth_done = 1;
-    printf("增速计算完成。\n");
-}
-
 void MVA_SqList_Sort_Va(PSqList L, int verbose) {
     int idx_arr[MAXSIZE];
-
     for (int year = 0; year < YEARS; year++) {
-
-        for (int i = 0; i < L->length; i++)
+        for (int i = 0; i < L->length; i++) {
             idx_arr[i] = i;
-
+        }
         quick_sort(L, idx_arr, 0, L->length - 1, year);
-
-        for (int rank = 0; rank < L->length; rank++)
+        for (int rank = 0; rank < L->length; rank++) {
             L->r[idx_arr[rank]].index_va[year] = rank + 1;
-
+        }
         if (verbose) {
-            printf("\n%d 年增加值排名:\n", 1999 + year);
-            printf("%-4s %-20s %12s\n", "名次", "国家", "增加值（亿美元）");
+            printf("%d年增加值排名：\n", 1999 + year);
+            printf("%-4s %-30s %-10s\n", "名次", "国家", "增加值");
             for (int j = 0; j < L->length; j++) {
                 int id = idx_arr[j];
-                printf("%-4d %-20s %12.2f\n",
-                       j + 1, L->r[id].country, L->r[id].value_added[year]);
+                printf("%-4d %-30s %-10.2f\n", j + 1, L->r[id].country, L->r[id].value_added[year]);
             }
         }
     }
 }
 
-void group_sort_select(PSqList L, int *group, int group_size,
-                       int *result_idx, int year) {
-    for (int i = 0; i < group_size; i++)
+void group_sort_select(PSqList L, int group[], int group_size, int result_idx[], int year) {
+    for (int i = 0; i < group_size; i++) {
         result_idx[i] = group[i];
+    }
 
     for (int i = 0; i < group_size - 1; i++) {
         int max = i;
         for (int j = i + 1; j < group_size; j++) {
-            if (L->r[result_idx[j]].growth_rate[year] > L->r[result_idx[max]].growth_rate[year])
+            if (L->r[result_idx[j]].growth_rate[year] > L->r[result_idx[max]].growth_rate[year]) {
                 max = j;
+            }
         }
+
         if (max != i) {
-            int tmp = result_idx[i];
+            int temp = result_idx[i];
             result_idx[i] = result_idx[max];
-            result_idx[max] = tmp;
+            result_idx[max] = temp;
         }
     }
 }
 
 void MVA_SqList_Sort_Gr(PSqList L, int verbose) {
-    if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
+    if (L->growth_done == 0) {
+        printf("请先执行增速计算！\n");
+        return;
+    }
     int temp_rank[MAXSIZE];
-
     L->count_l = L->count_ml = L->count_mh = L->count_h = 0;
     for (int i = 0; i < L->length; i++) {
         switch (L->r[i].country_type) {
-            case 0: L->index_l[L->count_l++] = i; break;
-            case 1: L->index_ml[L->count_ml++] = i; break;
-            case 2: L->index_mh[L->count_mh++] = i; break;
-            case 3: L->index_h[L->count_h++] = i; break;
+            case 0:
+                L->index_l[L->count_l++] = i;
+                break;
+            case 1:
+                L->index_ml[L->count_ml++] = i;
+                break;
+            case 2:
+                L->index_mh[L->count_mh++] = i;
+                break;
+            case 3:
+                L->index_h[L->count_h++] = i;
+                break;
         }
     }
 
     char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
-    int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
-    int   sizes[]      = {L->count_l, L->count_ml, L->count_mh, L->count_h};
+    int *groups[] = {L->index_l, L->index_ml, L->index_mh, L->index_h};
+    int sizes[] = {L->count_l, L->count_ml, L->count_mh, L->count_h};
 
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
             group_sort_select(L, groups[g], sizes[g], temp_rank, year);
-
-            for (int rank = 0; rank < sizes[g]; rank++)
-                L->r[temp_rank[rank]].index_gr[year] = rank + 1;
+            for (int rank = 0; rank < sizes[g]; rank++) {
+                L->r[temp_rank[rank]].index_gr[year] = rank + 1; 
+            }
 
             if (verbose) {
-                printf("\n%d年 %s国家 增速排名:\n",
-                       1999 + year, type_name[g]);
+                printf("%d年%s国家增速排名：\n", 1999 + year, type_name[g]);
+                printf("%-4s %-25s %10s\n", "名次", "国家", "增速");
                 for (int j = 0; j < sizes[g]; j++) {
-                    int id = temp_rank[j];
-                    printf("  %d. %s 增速=%.2f%%\n", j + 1,
-                           L->r[id].country,
-                           L->r[id].growth_rate[year] * 100);
+                    printf("%-4d %-25s %10.2f%%\n", j + 1, L->r[temp_rank[j]].country, L->r[temp_rank[j]].growth_rate[year] * 100);
                 }
             }
         }
     }
+
 }
 
 void MVA_SqList_Analyze(PSqList L) {
-    if (!L->growth_done) { printf("请先执行增速计算！\n"); return; }
+    if (L->growth_done == 0) {
+        printf("请先执行增速计算！\n");
+        return;
+    }
     char name[30];
     printf("请输入要分析的国家名：");
     scanf("%s", name);
-
     int i;
-    for (i = 0; i < L->length; i++)
-        if (strcmp(name, L->r[i].country) == 0) break;
+    for (i = 0; i < L->length; i++) {
+        if (strcmp(name, L->r[i].country) == 0) {
+            break;
+        }
+    }
 
-    if (i >= L->length) { printf("未找到该国。\n"); return; }
+    if (i >= L->length) {
+        printf("未找到该国。\n");
+        return;
+    }
 
     RecType *rec = &L->r[i];
 
-    float min_va = rec->value_added[0], max_va = rec->value_added[0];
-    float sum_va = 0, sum_sq_va = 0;
-    float min_gr = rec->growth_rate[0], max_gr = rec->growth_rate[0];
-    float sum_gr = 0, sum_sq_gr = 0;
+    float min_va = rec->value_added[0], max_va = rec->value_added[0], sum_va = 0, sum_sq_va = 0;
+    float min_gr = rec->growth_rate[0], max_gr = rec->growth_rate[0], sum_gr = 0, sum_sq_gr = 0;
 
     for (int k = 0; k < YEARS; k++) {
         float v = rec->value_added[k];
-        if (v < min_va) min_va = v;
-        if (v > max_va) max_va = v;
+        if (v < min_va) {
+            min_va = v;
+        }
+        if (v > max_va) {
+            max_va = v;
+        }
         sum_va += v;
 
         float g = rec->growth_rate[k];
-        if (g < min_gr) min_gr = g;
-        if (g > max_gr) max_gr = g;
+        if (g < min_gr) {
+            min_gr = g;
+        }
+        if (g > max_gr) {
+            max_gr = g;
+        }
         sum_gr += g;
     }
 
@@ -454,87 +502,80 @@ void MVA_SqList_Analyze(PSqList L) {
         sum_sq_va += (rec->value_added[k] - avg_va) * (rec->value_added[k] - avg_va);
         sum_sq_gr += (rec->growth_rate[k] - avg_gr) * (rec->growth_rate[k] - avg_gr);
     }
-    float var_va = sum_sq_va / (YEARS - 1);  
+
+    float var_va = sum_sq_va / (YEARS - 1);
     float var_gr = sum_sq_gr / (YEARS - 1);
 
-    printf("\n%s 1999-2019 年制造业统计分析：\n", name);
-    printf("  增加值最小值: %.2f, 最大值: %.2f, 均值: %.2f, 方差: %.2f\n",
-           min_va, max_va, avg_va, var_va);
-    printf("  增速最小值: %.2f%%, 最大值: %.2f%%, 均值: %.2f%%, 方差: %.6f\n",
-           min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
-
-    if (var_va > 1e6)
-        printf("  → 该国制造业增加值波动很大，发展不稳定。\n");
-    else if (var_va < 1e3)
-        printf("  → 该国制造业增加值波动较小，发展较平稳。\n");
+    printf("%s1999 - 2019年制造业统计分析：\n", name);
+    printf("增加值最小值：%.2f，最大值：%.2f，均值：%.2f，方差：%.2f\n", min_va, max_va, avg_va, var_va);
+    printf("增速最小值：%.2f%%，最大值：%.2f%%，均值：%.2f%%，方差：%.6f\n", min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
 }
 
 void MVA_SqList_Save(PSqList L, const char *src_name) {
-    char file_va[100], file_gr[100];
-
-    if (L->r[0].index_va[0] == 0)
+    if (L->r[0].index_va[0] == 0) {
         MVA_SqList_Sort_Va(L, 0);
-    if (L->r[0].index_gr[0] == 0)
+    }
+    if (L->r[0].index_gr[0] == 0) {
         MVA_SqList_Sort_Gr(L, 0);
+    }
 
+    char file_va[100], file_gr[100];
     int len = strlen(src_name);
-    strncpy(file_va, src_name, len - 4); file_va[len - 4] = '\0';
-    strncpy(file_gr, src_name, len - 4); file_gr[len - 4] = '\0';
+    strncpy(file_va, src_name, len - 4);
+    file_va[len - 4] = '\0';
+    strncpy(file_gr, src_name, len - 4);
+    file_gr[len - 4] = '\0';
     strcat(file_va, "_Sorted.txt");
     strcat(file_gr, "_Grouped_Sorted.txt");
 
     FILE *fp = fopen(file_va, "w");
-    if (!fp) { printf("无法创建文件 %s\n", file_va); return; }
+    if (!fp) {
+        printf("无法创建文件%s\n", file_va);
+        return;
+    }
+
     int rank_idx[MAXSIZE];
     for (int year = 0; year < YEARS; year++) {
-
-        for (int i = 0; i < L->length; i++)
+        for (int i = 0; i < L->length; i++) {
             rank_idx[L->r[i].index_va[year] - 1] = i;
-
-        fprintf(fp, "\n%d 年世界各国制造业增加值排名\n", 1999 + year);
-        fprintf(fp, "%-4s %-20s %12s\n", "名次", "国家", "增加值（亿美元）");
+        }
+        fprintf(fp, "%d年世界各国制造业增加值排名：\n", 1999 + year);
+        fprintf(fp, "%-6s %-30s %24s\n", "名次", "国家", "增加值（亿美元）");
         for (int rk = 0; rk < L->length; rk++) {
             int id = rank_idx[rk];
-            fprintf(fp, "%-4d %-20s %12.2f\n",
-                    rk + 1, L->r[id].country, L->r[id].value_added[year]);
+            fprintf(fp, "%2d %-30s %.2f\n", rk + 1, L->r[id].country, L->r[id].value_added[year]);
         }
     }
     fclose(fp);
 
     fp = fopen(file_gr, "w");
-    if (!fp) { printf("无法创建文件 %s\n", file_gr); return; }
+    if (!fp) {
+        printf("无法创建文件%s\n", file_gr);
+        return;
+    }
 
     char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
-    int  *groups[]     = {L->index_l, L->index_ml, L->index_mh, L->index_h};
-    int   sizes[]      = {L->count_l, L->count_ml, L->count_mh, L->count_h};
+    int *groups[] = {L->index_l, L->index_ml, L->index_mh, L->index_h};
+    int sizes[] = {L->count_l, L->count_ml, L->count_mh, L->count_h};
 
     for (int year = 0; year < YEARS; year++) {
         for (int g = 0; g < 4; g++) {
-            if (sizes[g] == 0) continue;
-
             for (int j = 0; j < sizes[g]; j++) {
                 int id = groups[g][j];
                 rank_idx[L->r[id].index_gr[year] - 1] = id;
             }
-
-            fprintf(fp, "\n%d 年 %s国家制造业增加值增速排名\n",
-                    1999 + year, type_name[g]);
-            fprintf(fp, "%-4s %-20s %10s\n", "名次", "国家", "增速");
+            fprintf(fp, "%d年%s国家制造业增速排名：\n", 1999 + year, type_name[g]);
+            fprintf(fp, "%-6s %-30s %24s\n", "名次", "国家", "增速");
             for (int rk = 0; rk < sizes[g]; rk++) {
                 int id = rank_idx[rk];
-                fprintf(fp, "%-4d %-20s %10.2f%%\n",
-                        rk + 1, L->r[id].country,
-                        L->r[id].growth_rate[year] * 100);
+                fprintf(fp, "%2d %-30s %.2f%%\n", rk + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
             }
         }
     }
     fclose(fp);
+    printf("排名结果已保存至:\n增加值排名：%s\n增速排名：%s\n", file_va, file_gr);
 
-    printf("排名结果已保存至：\n");
-    printf("  增加值排名 → %s\n", file_va);
-    printf("  增速排名   → %s\n", file_gr);
 }
-
 int MVA_Menu_Show(void) {
     printf("\n========== 世界各国制造业增加值统计分析系统 ==========\n");
     printf("*  1: 原始数据导入        2: 原始数据查询             *\n");
@@ -543,51 +584,61 @@ int MVA_Menu_Show(void) {
     printf("*  7: 统计结果保存        0: 退出                     *\n");
     printf("========================================================\n");
     printf("请输入选择（0-7）：");
-
-    int key;
-    while (1) {
-        if (scanf("%d", &key) == 1 && key >= 0 && key <= 7) return key;
-        while (getchar() != '\n');
-        printf("输入无效，请重新输入（0-7）：");
+    int choice;
+    while(1) {
+        if (scanf("%d", &choice) == 1 && choice >= 0 && choice <= 7)
+            return choice;
+        while (getchar() != '\n');  // 清掉无效输入
+        printf("输入无效，请重新输入");
     }
 }
 
 void manufacturing_system(void) {
     SqList L = {0};
-    char filename[300] = "制造业分析_inputdate.txt";
-
-    while (1) {
-        int key = MVA_Menu_Show();
-
-        switch (key) {
+    char filename[100] = "制造业分析_inputdate.txt";
+    while(1) {
+        int choice = MVA_Menu_Show();
+        switch (choice) {
             case 0:
-                printf("退出制造业统计分析系统。\n");
+                printf("退出制造业分析系统。\n");
                 return;
             case 1:
                 MVA_SqList_Read(&L, filename);
                 break;
-            case 2: MVA_SqList_Search(&L); break;
-            case 3: MVA_SqList_Calculate(&L); break;
-            case 4: MVA_SqList_Sort_Va(&L, 1); break;
-            case 5: MVA_SqList_Sort_Gr(&L, 1); break;
-            case 6: MVA_SqList_Analyze(&L); break;
-            case 7: MVA_SqList_Save(&L, filename); break;
+            case 2:
+                MVA_SqList_Search(&L);
+                break;
+            case 3:
+                MVA_SqList_Calculate(&L);
+                break;
+            case 4:
+                MVA_SqList_Sort_Va(&L, 1);
+                break;
+            case 5:
+                MVA_SqList_Sort_Gr(&L, 1);
+                break;
+            case 6:
+                MVA_SqList_Analyze(&L);
+                break;
+            case 7:
+                MVA_SqList_Save(&L, filename);
+                break;
+            default:
+                printf("无效选择，请重新输入！\n");
         }
     }
 }
 
 int main(void) {
-    while (1) {
-        printf("\n===== 数据结构课程设计 =====\n");
-        printf("1. 小猫钓鱼游戏\n");
-        printf("2. 制造业增加值统计分析系统\n");
-        printf("0. 退出\n");
-        printf("============================\n");
-        printf("请选择：");
+    while(1) {
+        printf("=====数据结构课程设计======\n");
+        printf("1.小猫钓鱼游戏\n");
+        printf("2.制造业增加值统计分析系统\n");
+        printf("0.退出\n");
 
         int choice;
+        printf("请选择：");
         scanf("%d", &choice);
-
         switch (choice) {
             case 0:
                 printf("再见！\n");
@@ -599,7 +650,7 @@ int main(void) {
                 manufacturing_system();
                 break;
             default:
-                printf("无效选择，请重新输入。\n");
+                printf("无效选择，请重新输入！\n");
         }
     }
 }
