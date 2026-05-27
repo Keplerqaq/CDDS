@@ -357,7 +357,7 @@ void quick_sort(PSqList L, int a[], int low, int high, int year) {
     }
 }
 
-void MVA_SqList_Sort_Va(PSqList L) {
+void MVA_SqList_Sort_Va(PSqList L, int verbose) {
     int idx_arr[MAXSIZE];
     for (int year = 0; year < YEARS; year++) {
         for (int i = 0; i < L->length; i++) {
@@ -367,11 +367,13 @@ void MVA_SqList_Sort_Va(PSqList L) {
         for (int rank = 0; rank < L->length; rank++) {
             L->r[idx_arr[rank]].index_va[year] = rank + 1;
         }
-        printf("%d年增加值排名：\n", 1999 + year);
-        printf("%-4s %-30s %-10s\n", "名次", "国家", "增加值");
-        for (int j = 0; j < L->length; j++) {
-            int id = idx_arr[j];
-            printf("%-4d %-30s %-10.2f\n", j + 1, L->r[id].country, L->r[id].value_added[year]);
+        if (verbose) {
+            printf("%d年增加值排名：\n", 1999 + year);
+            printf("%-4s %-30s %-10s\n", "名次", "国家", "增加值");
+            for (int j = 0; j < L->length; j++) {
+                int id = idx_arr[j];
+                printf("%-4d %-30s %-10.2f\n", j + 1, L->r[id].country, L->r[id].value_added[year]);
+            }
         }
     }
 }
@@ -397,7 +399,7 @@ void group_sort_select(PSqList L, int group[], int group_size, int result_idx[],
     }
 }
 
-void MVA_SqList_Sort_Gr(PSqList L) {
+void MVA_SqList_Sort_Gr(PSqList L, int verbose) {
     if (L->growth_done == 0) {
         printf("请先执行增速计算！\n");
         return;
@@ -432,10 +434,12 @@ void MVA_SqList_Sort_Gr(PSqList L) {
                 L->r[temp_rank[rank]].index_gr[year] = rank + 1; 
             }
 
-            printf("%d年%s国家增速排名：\n", 1999 + year, type_name[g]);
-            printf("%-4s %-25s %10s\n", "名次", "国家", "增速");
-            for (int j = 0; j < sizes[g]; j++) {
-                printf("%-4d %-25s %10.2f%%\n", j + 1, L->r[temp_rank[j]].country, L->r[temp_rank[j]].growth_rate[year] * 100);
+            if (verbose) {
+                printf("%d年%s国家增速排名：\n", 1999 + year, type_name[g]);
+                printf("%-4s %-25s %10s\n", "名次", "国家", "增速");
+                for (int j = 0; j < sizes[g]; j++) {
+                    printf("%-4d %-25s %10.2f%%\n", j + 1, L->r[temp_rank[j]].country, L->r[temp_rank[j]].growth_rate[year] * 100);
+                }
             }
         }
     }
@@ -503,14 +507,19 @@ void MVA_SqList_Analyze(PSqList L) {
     printf("增速最小值：%.2f%%，最大值：%.2f%%，均值：%.2f%%，方差：%.6f\n", min_gr * 100, max_gr * 100, avg_gr * 100, var_gr);
 }
 
+void MVA_SqList_Save(PSqList L, const char *src_name) {
+    
+}
+
 void manufacturing_system(void) {
     SqList L;
     L.length = 0;
     L.growth_done = 0;
     MVA_SqList_Read(&L, "制造业分析_inputdate.txt");
     MVA_SqList_Calculate(&L);
-    //MVA_SqList_Sort_Va(&L);
-    MVA_SqList_Sort_Gr(&L);
+    //MVA_SqList_Sort_Va(&L, 1);
+    //MVA_SqList_Sort_Gr(&L, 1);
+    MVA_SqList_Analyze(&L);
 }
 
 int main(void) {
