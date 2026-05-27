@@ -546,8 +546,8 @@ int MVA_Menu_Show(void) {
 
     int key;
     while (1) {
-        scanf("%d", &key);
-        if (key >= 0 && key <= 7) return key;
+        if (scanf("%d", &key) == 1 && key >= 0 && key <= 7) return key;
+        while (getchar() != '\n');
         printf("输入无效，请重新输入（0-7）：");
     }
 }

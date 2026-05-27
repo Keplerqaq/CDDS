@@ -586,10 +586,9 @@ int MVA_Menu_Show(void) {
     printf("请输入选择（0-7）：");
     int choice;
     while(1) {
-        scanf("%d", &choice);
-        if (choice >= 0 && choice <= 7) {
+        if (scanf("%d", &choice) == 1 && choice >= 0 && choice <= 7)
             return choice;
-        }
+        while (getchar() != '\n');  // 清掉无效输入
         printf("输入无效，请重新输入");
     }
 }
