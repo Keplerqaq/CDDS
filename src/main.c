@@ -555,31 +555,16 @@ int MVA_Menu_Show(void) {
 void manufacturing_system(void) {
     SqList L = {0};
     char filename[300] = "制造业分析_inputdate.txt";
-    int  loaded = 0;
 
     while (1) {
         int key = MVA_Menu_Show();
-
-        if (key >= 2 && key <= 7 && !loaded) {
-            printf("请先导入数据！\n");
-            continue;
-        }
 
         switch (key) {
             case 0:
                 printf("退出制造业统计分析系统。\n");
                 return;
             case 1:
-                printf("请输入数据文件名（默认: %s）：", filename);
-                getchar();
-                {
-                    char tmp[300];
-                    fgets(tmp, sizeof(tmp), stdin);
-                    tmp[strcspn(tmp, "\n")] = 0;
-                    if (strlen(tmp) > 0) strcpy(filename, tmp);
-                }
                 MVA_SqList_Read(&L, filename);
-                if (L.length > 0) loaded = 1;
                 break;
             case 2: MVA_SqList_Search(&L); break;
             case 3: MVA_SqList_Calculate(&L); break;
