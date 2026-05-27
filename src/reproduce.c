@@ -508,7 +508,69 @@ void MVA_SqList_Analyze(PSqList L) {
 }
 
 void MVA_SqList_Save(PSqList L, const char *src_name) {
-    
+    if (L->r[0].index_va[0] == 0) {
+        MVA_SqList_Sort_Va(L, 0);
+    }
+    if (L->r[0].index_gr[0] == 0) {
+        MVA_SqList_Sort_Gr(L, 0);
+    }
+
+    char file_va[100], file_gr[100];
+    int len = strlen(src_name);
+    strncpy(file_va, src_name, len - 4);
+    file_va[len - 4] = '\0';
+    strncpy(file_gr, src_name, len - 4);
+    file_gr[len - 4] = '\0';
+    strcat(file_va, "_Sorted.txt");
+    strcat(file_gr, "_Grouped_Sorted.txt");
+
+    FILE *fp = fopen(file_va, "w");
+    if (!fp) {
+        printf("无法创建文件%s\n", file_va);
+        return;
+    }
+
+    int rank_idx[MAXSIZE];
+    for (int year = 0; year < YEARS; year++) {
+        for (int i = 0; i < L->length; i++) {
+            rank_idx[L->r[i].index_va[year] - 1] = i;
+        }
+        fprintf(fp, "%d年世界各国制造业增加值排名：\n", 1999 + year);
+        fprintf(fp, "%-6s %-30s %24s\n", "名次", "国家", "增加值（亿美元）");
+        for (int rk = 0; rk < L->length; rk++) {
+            int id = rank_idx[rk];
+            fprintf(fp, "%2d %-30s %.2f\n", rk + 1, L->r[id].country, L->r[id].value_added[year]);
+        }
+    }
+    fclose(fp);
+
+    fp = fopen(file_gr, "w");
+    if (!fp) {
+        printf("无法创建文件%s\n", file_gr);
+        return;
+    }
+
+    char *type_name[] = {"低收入", "中低等收入", "中高等收入", "高收入"};
+    int *groups[] = {L->index_l, L->index_ml, L->index_mh, L->index_h};
+    int sizes[] = {L->count_l, L->count_ml, L->count_mh, L->count_h};
+
+    for (int year = 0; year < YEARS; year++) {
+        for (int g = 0; g < 4; g++) {
+            for (int j = 0; j < sizes[g]; j++) {
+                int id = groups[g][j];
+                rank_idx[L->r[id].index_gr[year] - 1] = id;
+            }
+            fprintf(fp, "%d年%s国家制造业增速排名：\n", 1999 + year, type_name[g]);
+            fprintf(fp, "%-6s %-30s %24s\n", "名次", "国家", "增速");
+            for (int rk = 0; rk < sizes[g]; rk++) {
+                int id = rank_idx[rk];
+                fprintf(fp, "%2d %-30s %.2f%%\n", rk + 1, L->r[id].country, L->r[id].growth_rate[year] * 100);
+            }
+        }
+    }
+    fclose(fp);
+    printf("排名结果已保存至:\n增加值排名：%s\n增速排名：%s\n", file_va, file_gr);
+
 }
 
 void manufacturing_system(void) {
