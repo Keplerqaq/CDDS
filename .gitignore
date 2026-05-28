@@ -9,7 +9,7 @@
 .idea/
 
 # Build
-src/main
+src/main.out
 src/reproduce
 
 # Generated files
