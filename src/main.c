@@ -180,15 +180,6 @@ void fish_game(void) {
     printf("            小猫钓鱼游戏\n");
     printf("========================================\n\n");
     srand((unsigned int)time(NULL));
-    int deck[36], deck_size = 36, idx = 0;
-    for (int v = 1; v <=9; v++) {
-        for (int i = 0; i < 4; i++) {
-            deck[idx] = v;
-            idx++;
-        }
-    }
-
-    shuffle(deck, deck_size);
 
     LinkQueue player_a, player_b;
     queue_init(&player_a);
@@ -198,6 +189,14 @@ void fish_game(void) {
     stack_init(&table);
     int table_flag[9] = {0};
 
+    int deck[36], deck_size = 36, idx = 0;
+    for (int v = 1; v <=9; v++) {
+        for (int i = 0; i < 4; i++) {
+            deck[idx] = v;
+            idx++;
+        }
+    }
+    shuffle(deck, deck_size);
     deal_cards(deck, deck_size, &player_a, &player_b);
 
     int turn = 0;
@@ -586,9 +585,9 @@ int MVA_Menu_Show(void) {
     printf("请输入选择（0-7）：");
     int choice;
     while(1) {
-        if (scanf("%d", &choice) == 1 && choice >= 0 && choice <= 7)
+        scanf("%d", &choice);
+        if (choice >= 0 && choice <= 7)
             return choice;
-        while (getchar() != '\n');  // 清掉无效输入
         printf("输入无效，请重新输入");
     }
 }
