@@ -56,16 +56,6 @@ int dequeue(PLinkQueue q) {
     return card;
 }
 
-int queue_length(PLinkQueue q) {
-    int len = 0;
-    PQNode p = q->front;
-    while(p) {
-        len++;
-        p = p->next;
-    }
-    return len;
-}
-
 void queue_print(PLinkQueue q) {
     PQNode p = q->front;
     if(!p) {
